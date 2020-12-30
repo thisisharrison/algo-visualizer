@@ -34,6 +34,7 @@ const listReducer = (oldState = [], action) => {
 const store = createStore(listReducer);
 window.store = store;
 window.receiveNumber = receiveNumber;
+window.Util = Util;
 
 // Components
 const Root = ({ store }) => (
@@ -51,15 +52,20 @@ const App = () => (
         <ListContainer />
     </div>
 )
-const Toolbar = () => (
-    <div>
-        <h1>Inside Toolbar</h1>
-        <button type="button"
-                onClick={() => store.dispatch(receiveNumber(5))}>
-            Add Number
-        </button>
-    </div>
-)
+const Toolbar = () => {
+    return (
+        <div>
+            <h1>Inside Toolbar</h1>
+            <button type="button"
+                onClick={() => store.dispatch(receiveNumber(Util.randomNumber()))}>
+                Add Number
+            </button>
+            <button type="button">
+                Merge Sort
+            </button>
+        </div>
+    )
+}
 const list_mapStateToProps = state => (
     {
         numbers: store.getState()
@@ -85,3 +91,14 @@ class Number extends React.Component {
         return <li>{this.props.number}</li>
     }
 }
+
+
+// Util
+const Util = {
+    randomNumber(min = 1, max = 99) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+}
+export default Util;
