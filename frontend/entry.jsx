@@ -132,7 +132,7 @@ const List = ({ numbers }) => {
     return (
         <div>
             <h1>Inside List</h1>
-            <ul>
+            <ul className="list">
                 {list}
             </ul>
         </div>
@@ -146,7 +146,7 @@ class Number extends React.Component {
         super(props)
     }
     render(){
-        return <li>{this.props.number}</li>
+        return <li className="item">{this.props.number}</li>
     }
 }
 
