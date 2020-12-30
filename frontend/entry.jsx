@@ -19,9 +19,19 @@ const receiveNumber = (number) => (
         number
     }
 )
+const clearNumbers = () => (
+    {
+        type: 'CLEAR_NUMBERS'
+    }
+)
 const mergeSort = () => (
     {
         type: 'MERGE_SORT'
+    }
+)
+const bubbleSort = () => (
+    {
+        type: 'BUBBLE_SORT'
     }
 )
 
@@ -30,8 +40,12 @@ const listReducer = (oldState = [], action) => {
     switch (action.type) {
         case 'RECEIVE_NUMBER':
             return [...oldState, action.number];
+        case 'CLEAR_NUMBERS':
+            return [];
         case 'MERGE_SORT':
             return Util.mergeSort(oldState);
+        case 'BUBBLE_SORT':
+            return Util.bubbleSort(oldState);
         default: 
             return oldState;
     }
@@ -41,6 +55,7 @@ const listReducer = (oldState = [], action) => {
 const store = createStore(listReducer);
 window.store = store;
 window.receiveNumber = receiveNumber;
+window.a = [2, 7, 1, 4, 9];
 
 
 // Components
@@ -64,10 +79,12 @@ const App = () => (
 const toolbar_mapDispatchToProps = dispatch => (
     {
         receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
-        mergeSort: () => dispatch(mergeSort())
+        clearNumbers: () => dispatch(clearNumbers()),
+        mergeSort: () => dispatch(mergeSort()),
+        bubbleSort: () => dispatch(bubbleSort())
     }
 )
-const Toolbar = ({ receiveNumber, mergeSort }) => {
+const Toolbar = ({ receiveNumber, clearNumbers, bubbleSort, mergeSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -76,8 +93,16 @@ const Toolbar = ({ receiveNumber, mergeSort }) => {
                 Add Number
             </button>
             <button type="button"
+                onClick={ bubbleSort }>
+                Bubble Sort
+            </button>
+            <button type="button"
                 onClick={ mergeSort }>
                 Merge Sort
+            </button>
+            <button type="button"
+                onClick={ clearNumbers }>
+                Clear
             </button>
         </div>
     )
@@ -140,6 +165,25 @@ const Util = {
             merged.push(nextItem);
         }
         return [...merged, ...a1, ...a2];
+    },
+    bubbleSort(array) {
+        let unsorted = true;
+        let clone = Object.assign([], array);
+        let length = array.length;
+        while (unsorted) {
+            unsorted = false;
+            for (let i = 0; i < length - 1; i++) {
+                switch (clone[i] <= clone[i + 1]) {
+                    case true:
+                        break;
+                    case false:
+                        [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
+                        unsorted = true;
+                        break;
+                }
+            }
+        }
+        return clone;
     }
 }
 export default Util;
