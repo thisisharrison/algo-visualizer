@@ -48,7 +48,7 @@ const listReducer = (oldState = [], action) => {
         case 'CLEAR_NUMBERS':
             return [];
         case 'QUICK_SORT':
-            return [];
+            return Util.quickSort(oldState);
         case 'MERGE_SORT':
             return Util.mergeSort(oldState);
         case 'BUBBLE_SORT':
@@ -87,7 +87,7 @@ const toolbar_mapDispatchToProps = dispatch => (
     {
         receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
         clearNumbers: () => dispatch(clearNumbers()),
-        mergeSort: () => dispatch(quickSort()),
+        quickSort: () => dispatch(quickSort()),
         mergeSort: () => dispatch(mergeSort()),
         bubbleSort: () => dispatch(bubbleSort())
     }
@@ -196,6 +196,23 @@ const Util = {
             }
         }
         return clone;
+    },
+    quickSort(array) {
+        if (array.length < 2) return array;
+        let pivot = array[0];
+        let smaller = [];
+        let larger = [];
+        array.slice(1).forEach(num => {
+            if(num <= pivot) {
+                smaller.push(num);
+            } else {
+                larger.push(num);
+            }
+        })
+        let sortSmaller = Util.quickSort(smaller);
+        let sortLarger = Util.quickSort(larger);
+        sortSmaller.push(pivot)
+        return sortSmaller.concat(sortLarger);
     }
 }
 export default Util;
