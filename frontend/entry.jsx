@@ -24,6 +24,11 @@ const clearNumbers = () => (
         type: 'CLEAR_NUMBERS'
     }
 )
+const quickSort = () => (
+    {
+        type: 'QUICK_SORT'
+    }
+)
 const mergeSort = () => (
     {
         type: 'MERGE_SORT'
@@ -41,6 +46,8 @@ const listReducer = (oldState = [], action) => {
         case 'RECEIVE_NUMBER':
             return [...oldState, action.number];
         case 'CLEAR_NUMBERS':
+            return [];
+        case 'QUICK_SORT':
             return [];
         case 'MERGE_SORT':
             return Util.mergeSort(oldState);
@@ -80,11 +87,12 @@ const toolbar_mapDispatchToProps = dispatch => (
     {
         receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
         clearNumbers: () => dispatch(clearNumbers()),
+        mergeSort: () => dispatch(quickSort()),
         mergeSort: () => dispatch(mergeSort()),
         bubbleSort: () => dispatch(bubbleSort())
     }
 )
-const Toolbar = ({ receiveNumber, clearNumbers, bubbleSort, mergeSort }) => {
+const Toolbar = ({ receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -93,12 +101,16 @@ const Toolbar = ({ receiveNumber, clearNumbers, bubbleSort, mergeSort }) => {
                 Add Number
             </button>
             <button type="button"
-                onClick={ bubbleSort }>
-                Bubble Sort
+                onClick={ quickSort }>
+                Quick Sort
             </button>
             <button type="button"
                 onClick={ mergeSort }>
                 Merge Sort
+            </button>
+            <button type="button"
+                onClick={bubbleSort}>
+                Bubble Sort
             </button>
             <button type="button"
                 onClick={ clearNumbers }>
