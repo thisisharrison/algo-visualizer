@@ -19,14 +19,21 @@ const receiveNumber = (number) => (
         number
     }
 )
+const mergeSort = () => (
+    {
+        type: 'MERGE_SORT'
+    }
+)
 
 // Reducer
 const listReducer = (oldState = [], action) => {
     switch (action.type) {
         case 'RECEIVE_NUMBER':
-            return [...oldState, action.number]
+            return [...oldState, action.number];
+        case 'MERGE_SORT':
+            return Util.mergeSort(oldState);
         default: 
-            return oldState
+            return oldState;
     }
 }
 
@@ -34,7 +41,7 @@ const listReducer = (oldState = [], action) => {
 const store = createStore(listReducer);
 window.store = store;
 window.receiveNumber = receiveNumber;
-window.Util = Util;
+
 
 // Components
 const Root = ({ store }) => (
@@ -56,18 +63,20 @@ const App = () => (
 // Toolbar
 const toolbar_mapDispatchToProps = dispatch => (
     {
-        receiveNumber: () => dispatch(receiveNumber(Util.randomNumber()))
+        receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
+        mergeSort: () => dispatch(mergeSort())
     }
 )
-const Toolbar = ({ receiveNumber }) => {
+const Toolbar = ({ receiveNumber, mergeSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
             <button type="button"
-                onClick={() => receiveNumber() }>
+                onClick={ receiveNumber }>
                 Add Number
             </button>
-            <button type="button">
+            <button type="button"
+                onClick={ mergeSort }>
                 Merge Sort
             </button>
         </div>
@@ -111,6 +120,27 @@ const Util = {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min) + min);
+    },
+    mergeSort(array) {
+        if (array.length < 2) return array;
+        let midIdx, length, left, right, sortLeft, sortRight;
+        length = array.length;
+        midIdx = Math.floor(length / 2);
+        left = array.slice(0, midIdx);
+        right = array.slice(midIdx);
+        sortLeft = Util.mergeSort(left); 
+        sortRight = Util.mergeSort(right);
+        return Util.merge(sortLeft, sortRight);
+    },
+    merge(a1, a2) {
+        let merged, nextItem;
+        merged = [];
+        while (a1.length > 0 && a2.length > 0) {
+            nextItem = (a1[0] > a2[0]) ? a2.shift() : a1.shift();
+            merged.push(nextItem);
+        }
+        return [...merged, ...a1, ...a2];
     }
 }
 export default Util;
+window.Util = Util;
