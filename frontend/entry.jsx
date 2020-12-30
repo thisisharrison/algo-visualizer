@@ -48,16 +48,23 @@ const Root = ({ store }) => (
 const App = () => (
     <div>
         <h1>Inside App</h1>
-        <Toolbar />
+        <ToolbarContainer />
         <ListContainer />
     </div>
 )
-const Toolbar = () => {
+
+// Toolbar
+const toolbar_mapDispatchToProps = dispatch => (
+    {
+        receiveNumber: () => dispatch(receiveNumber(Util.randomNumber()))
+    }
+)
+const Toolbar = ({ receiveNumber }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
             <button type="button"
-                onClick={() => store.dispatch(receiveNumber(Util.randomNumber()))}>
+                onClick={() => receiveNumber() }>
                 Add Number
             </button>
             <button type="button">
@@ -66,6 +73,9 @@ const Toolbar = () => {
         </div>
     )
 }
+const ToolbarContainer = connect(null, toolbar_mapDispatchToProps)(Toolbar);
+
+// List 
 const list_mapStateToProps = state => (
     {
         numbers: store.getState()
@@ -83,6 +93,8 @@ const List = ({ numbers }) => {
     )
 }
 const ListContainer = connect(list_mapStateToProps, null)(List);
+
+// Number
 class Number extends React.Component {
     constructor(props) {
         super(props)
