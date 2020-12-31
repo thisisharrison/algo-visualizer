@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
+import logger from 'redux-logger';
 import { Provider, connect } from 'react-redux';
 
 // import thunk from 'redux-thunk';
@@ -67,7 +68,7 @@ const listReducer = (oldState = [], action) => {
 }
 
 // Store
-const store = createStore(listReducer);
+const store = createStore(listReducer, applyMiddleware(logger));
 window.store = store;
 window.receiveNumber = receiveNumber;
 window.a = [2, 7, 1, 4, 9];
