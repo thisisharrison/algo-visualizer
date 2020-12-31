@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(<Root store={store} />, content);
 });
 
+// Hierarchy:
+// Root
+//     App (Top-level concern)
+//         ToolbarContainer
+//             Toolbar
+//         ListContainer
+//             ListItem
+
 // Action
 const receiveNumber = (number) => (
     {
@@ -121,14 +129,14 @@ const Toolbar = ({ receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort
 }
 const ToolbarContainer = connect(null, toolbar_mapDispatchToProps)(Toolbar);
 
-// List 
+// List
 const list_mapStateToProps = state => (
     {
-        numbers: store.getState()
+        numbers: state
     }
 );
 const List = ({ numbers }) => {
-    const list = numbers.map((number, idx) => <Number number={number} key={idx} />)
+    const list = numbers.map((number, idx) => <ListItem number={number} key={idx} />)
     return (
         <div>
             <h1>Inside List</h1>
@@ -140,15 +148,10 @@ const List = ({ numbers }) => {
 }
 const ListContainer = connect(list_mapStateToProps, null)(List);
 
-// Number
-class Number extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-    render(){
-        return <li className="item">{this.props.number}</li>
-    }
-}
+// ListItem
+const ListItem = ({number}) => (
+    <li className="item">{number}</li>
+)
 
 
 // Util
