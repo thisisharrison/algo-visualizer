@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import logger from 'redux-logger';
 import { Provider, connect } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-// import thunk from 'redux-thunk';
+import thunk from 'redux-thunk';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,7 +67,7 @@ const listReducer = (oldState = [], action) => {
 }
 
 // Store
-const store = createStore(listReducer, composeWithDevTools(applyMiddleware(logger)));
+const store = createStore(listReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
 window.store = store;
 window.receiveNumber = receiveNumber;
 window.a = [2, 7, 1, 4, 9];
@@ -163,6 +163,7 @@ const Util = {
     },
     mergeSort(array) {
         if (array.length < 2) return array;
+        console.log('Active: ', array) // Working on Visualizer
         let midIdx, length, left, right, sortLeft, sortRight;
         length = array.length;
         midIdx = Math.floor(length / 2);
@@ -176,6 +177,7 @@ const Util = {
         let merged, nextItem;
         merged = [];
         while (a1.length > 0 && a2.length > 0) {
+            console.log('Comparison: ', a1[0], a2[0]) // Working on Visualizer
             nextItem = (a1[0] > a2[0]) ? a2.shift() : a1.shift();
             merged.push(nextItem);
         }
@@ -220,3 +222,19 @@ const Util = {
 }
 export default Util;
 window.Util = Util;
+
+// Using thunk to create UI of sorting indexes 
+// However, Indexes will change.
+// List Reducer should keep original index and new index order
+function sortIndexes(array = [[1, 2], [3, 4]]) {
+    return function (dispatch) {
+        for (subarray of array) {
+            setTimeout(() => {
+                dispatch(comparison(subarray))
+            }, 5000) // Maybe needs some kind of promise, if doesn't need to sort
+            setTimeout(() => {
+                dispatch(swap(subarray))
+            }, 10000) // So we will have 5 sec between compare and swap cycle
+        }
+    }
+}
