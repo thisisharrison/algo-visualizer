@@ -70,7 +70,7 @@ const listReducer = (oldState = [], action) => {
 const store = createStore(listReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
 window.store = store;
 window.receiveNumber = receiveNumber;
-window.a = [2, 7, 1, 4, 9];
+window.a = [2, 7, 1, 4, 9, 3, 8, 10, 1];
 
 
 // Components
@@ -152,6 +152,18 @@ const ListContainer = connect(list_mapStateToProps, null)(List);
 const ListItem = ({number}) => (
     <li className="item">{number}</li>
 )
+// If I push to the Ul new List Item every add new I can keep the ogIdx the same. 
+// How will I get the newIdx?
+// Maybe the animation tracks the idx and then find the Listitem with state that matches
+// and then change that ListItem?
+// class ListItem extends React.Component {
+//     constructor(props) {
+//         this.state = {
+//             ogIdx: "",
+//             newIdx: ""
+//         }
+//     }
+// }
 
 
 // Util
@@ -226,8 +238,9 @@ window.Util = Util;
 // Using thunk to create UI of sorting indexes 
 // However, Indexes will change.
 // List Reducer should keep original index and new index order
-function sortIndexes(array = [[1, 2], [3, 4]]) {
+function animateSort(state) {
     return function (dispatch) {
+        let array = state.animation
         for (subarray of array) {
             setTimeout(() => {
                 dispatch(comparison(subarray))
@@ -238,3 +251,30 @@ function sortIndexes(array = [[1, 2], [3, 4]]) {
         }
     }
 }
+// If we could track index changes
+// [0,1,2,3,4,5]
+// [1,0,2,3,4,5]
+// [1,0,3,2,4,5]
+// Maybe a reducer with a state tree like 
+// {
+//     animation: 
+//     [
+//         {
+//             comparison: [1, 2]
+//         },
+//         {
+//             swap: [1, 2]
+//         },
+//         {
+//             comparison: [3, 4]
+//         },
+//         {
+//             swap: [3, 4]
+//         }
+//     ]
+// },
+//      list: {
+//              unsorted: [],
+//              sorted: []
+//          }
+// }
