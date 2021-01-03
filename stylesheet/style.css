@@ -49,24 +49,24 @@ ul {
     cursor: pointer;
 }
 
-.inspect {
+.comparison {
     border: 1px solid #DBA27E;
     background: #DBA27E;
     color: #F7ECE5;
 }
-.inspect:before {
+.comparison:before {
     content: '🔎';
     position: absolute;
     top: 0px;
 }
 
-.swap {
+.sort {
     border: 1px solid #8399BF;
     background: #8399BF;
     color: #4463A0;
 }
 
-.swap:before {
+.sort:before {
     content: '🔄';
     position: absolute;
     top: 0px;

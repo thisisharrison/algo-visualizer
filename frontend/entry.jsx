@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import logger from 'redux-logger';
 import { Provider, connect } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -32,6 +32,12 @@ const clearNumbers = () => (
         type: 'CLEAR_NUMBERS'
     }
 )
+const receiveSortedNumbers = (numbers) => (
+    {
+        type: 'RECEIVE_SORTED_NUMBERS',
+        numbers
+    }
+)
 const quickSort = () => (
     {
         type: 'QUICK_SORT'
@@ -47,29 +53,122 @@ const bubbleSort = () => (
         type: 'BUBBLE_SORT'
     }
 )
+const receiveCompare = (x, y) => dispatch => {
+    setTimeout(()=> {
+        dispatch({
+            type: 'COMPARE',
+            numbers: [x, y]
+        })
+    }, 0)
+    setTimeout(() => {
+        dispatch({
+            type: 'RESET',
+            numbers: [x, y]
+        })
+    }, 5000)
+}
+const receiveSort = (x, y) => dispatch => {
+    setTimeout(() => {
+        dispatch({
+            type: 'SORT',
+            numbers: [x, y]
+        })
+    }, 0)
+    setTimeout(() => {
+        dispatch({
+            type: 'RESET',
+            numbers: [x, y]
+        })
+    }, 5000)
+}
+
+// async thunk action creator => this should be what's dispatched by clicking on a sorting algorithm
+// const asyncMergeSort = array => dispatch => ({
+    // merge sort algorithm
+    // dispatch(compare(...))
+    // dispatch(sort())
+// })
+// Then the reducers should just change the for each _SORT case newState.sorted = action.array
+const asyncBubbleSort = array => dispatch => {
+    let unsorted = true;
+    let clone = Object.assign([], array);
+    let length = array.length;
+    while (unsorted) {
+        unsorted = false;
+        for (let i = 0; i < length - 1; i++) {
+            dispatch(receiveCompare(clone[i], clone[i + 1]));
+            switch (clone[i] <= clone[i + 1]) {
+                case true:
+                    break;
+                case false:
+                    [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
+                    dispatch(receiveSort(clone[i], clone[i + 1]));
+                    unsorted = true;
+                    break;
+            }
+        }
+    }
+    dispatch(receiveSortedNumbers(clone))
+    return clone;   
+}
 
 // Reducer
-const listReducer = (oldState = [], action) => {
+const initialState = { unsorted: [2, 7, 1, 4, 9, 3, 8, 10], sorted: []};
+const listReducer = (oldState = initialState, action) => {
+    Object.freeze(oldState);
+    let newState = Object.assign({}, oldState);
     switch (action.type) {
         case 'RECEIVE_NUMBER':
-            return [...oldState, action.number];
+            newState.unsorted = [...newState.unsorted, action.number]
+            return newState;
+        case 'RECEIVE_SORTED_NUMBERS':
+            newState.sorted = [...newState.sorted, ...action.numbers]
+            return newState;
         case 'CLEAR_NUMBERS':
-            return [];
+            newState.sorted = [];
+            newState.unsorted = [];
+            return newState;
         case 'QUICK_SORT':
-            return Util.quickSort(oldState);
+            newState.sorted = Util.quickSort(newState.unsorted);
+            return newState;
         case 'MERGE_SORT':
-            return Util.mergeSort(oldState);
+            newState.sorted = Util.mergeSort(newState.unsorted);
+            return newState;
         case 'BUBBLE_SORT':
-            return Util.bubbleSort(oldState);
+            newState.sorted = Util.bubbleSort(newState.unsorted);
+            return newState;
         default: 
             return oldState;
     }
 }
+const animationReducer = (oldState = [], action) => {
+    Object.freeze(oldState);
+    let newState = Object.assign([], oldState);
+    switch (action.type) {
+        case 'COMPARE':
+            newState.push({ comparison: action.numbers })
+            return newState;
+        case 'SORT':
+            newState.push({ sort: action.numbers })
+            return newState;
+        case 'RESET': 
+            newState.push({ reset: action.numbers })
+            return newState;
+        default:
+            return oldState;
+    }
+}
+const rootReducer = combineReducers({
+    list: listReducer,
+    animation: animationReducer
+})
 
 // Store
-const store = createStore(listReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
 window.store = store;
-window.receiveNumber = receiveNumber;
+window.receiveSort = receiveSort;
+window.receiveCompare = receiveCompare;
+window.animationReducer = animationReducer;
 window.a = [2, 7, 1, 4, 9, 3, 8, 10, 1];
 
 
@@ -91,16 +190,20 @@ const App = () => (
 )
 
 // Toolbar
+const toolbar_mapStateToProps = state => ({
+    array: state.list.unsorted
+})
 const toolbar_mapDispatchToProps = dispatch => (
     {
         receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
         clearNumbers: () => dispatch(clearNumbers()),
         quickSort: () => dispatch(quickSort()),
         mergeSort: () => dispatch(mergeSort()),
-        bubbleSort: () => dispatch(bubbleSort())
+        bubbleSort: () => dispatch(bubbleSort()),
+        asyncBubbleSort: (array) => dispatch(asyncBubbleSort(array))
     }
 )
-const Toolbar = ({ receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort }) => {
+const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort, asyncBubbleSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -117,7 +220,8 @@ const Toolbar = ({ receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort
                 Merge Sort
             </button>
             <button type="button"
-                onClick={bubbleSort}>
+                // onClick={bubbleSort}
+                onClick = {(e) => asyncBubbleSort(array)}>
                 Bubble Sort
             </button>
             <button type="button"
@@ -127,16 +231,35 @@ const Toolbar = ({ receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort
         </div>
     )
 }
-const ToolbarContainer = connect(null, toolbar_mapDispatchToProps)(Toolbar);
+const ToolbarContainer = connect(toolbar_mapStateToProps, toolbar_mapDispatchToProps)(Toolbar);
 
 // List
 const list_mapStateToProps = state => (
     {
-        numbers: state
+        numbers: state.list.unsorted,
+        sorted: state.list.sorted,
+        animation: Array.from(state.animation) // Maybe we animate after sorted array is finish. And set timeout per anime
     }
 );
-const List = ({ numbers }) => {
-    const list = numbers.map((number, idx) => <ListItem number={number} key={idx} />)
+const List = ({ numbers, animation }) => {
+    let klass = "";
+    let cloneAnimation = Object.assign([], animation);
+    const list = numbers.map((number, idx) => {
+        if (cloneAnimation.length > 0) {
+            let anime = cloneAnimation[0];
+            klass = Object.keys(anime)[0];
+            let values = anime[klass];
+            if (values.includes(number)) { 
+                cloneAnimation.shift();
+            }
+            console.log(klass)
+            if (klass === "reset") {
+                debugger
+                klass = "";
+            }
+        }
+        return (<ListItem number={number} key={idx} klass={klass}/>)
+    })
     return (
         <div>
             <h1>Inside List</h1>
@@ -146,22 +269,49 @@ const List = ({ numbers }) => {
         </div>
     )
 }
+// class List extends React.Component {
+//     render() {
+//         const list = this.props.numbers.map((number, idx) => <ListItem number={number} key={idx} ogIdx={idx}/>)
+//         return (
+//             <div>
+//                 <h1>Inside List</h1>
+//                 <ul className="list">
+//                     {list}
+//                 </ul>
+//             </div>
+//         )
+//     }
+// }
 const ListContainer = connect(list_mapStateToProps, null)(List);
 
 // ListItem
-const ListItem = ({number}) => (
-    <li className="item">{number}</li>
-)
+const ListItem = ({number, klass}) => {
+    return (
+    <div>
+        <li className={`item ${klass}`} >{number}</li>
+    </div>
+
+)}
 // If I push to the Ul new List Item every add new I can keep the ogIdx the same. 
 // How will I get the newIdx?
 // Maybe the animation tracks the idx and then find the Listitem with state that matches
 // and then change that ListItem?
 // class ListItem extends React.Component {
 //     constructor(props) {
+//         super(props);
 //         this.state = {
-//             ogIdx: "",
-//             newIdx: ""
+//             ogIdx: this.props.ogIdx,
+//             newIdx: "",
+//             compare: false,
+//             swap: false,
+//             active: true
 //         }
+//     }
+//     render(){
+//         const number = this.props.number;
+//         return(
+//         <li className="item">{number}</li>
+//         )
 //     }
 // }
 
