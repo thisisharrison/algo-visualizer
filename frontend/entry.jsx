@@ -54,32 +54,38 @@ const bubbleSort = () => (
     }
 )
 const receiveCompare = (x, y) => dispatch => {
-    setTimeout(()=> {
-        dispatch({
-            type: 'COMPARE',
-            numbers: [x, y]
-        })
-    }, 0)
-    setTimeout(() => {
-        dispatch({
-            type: 'RESET',
-            numbers: [x, y]
-        })
-    }, 5000)
+    dispatch({
+        type: 'COMPARE',
+        numbers: [x, y]
+    })
+    dispatch({
+        type: 'RESET',
+        numbers: [x, y]
+    })
 }
 const receiveSort = (x, y) => dispatch => {
-    setTimeout(() => {
-        dispatch({
-            type: 'SORT',
-            numbers: [x, y]
-        })
-    }, 0)
-    setTimeout(() => {
-        dispatch({
-            type: 'RESET',
-            numbers: [x, y]
-        })
-    }, 5000)
+    dispatch({
+        type: 'SORT',
+        numbers: [x, y]
+    })
+    dispatch({
+        type: 'RESET',
+        numbers: [x, y]
+    })
+}
+const runAnimation = () => (dispatch, getState) => {
+    const allAnimation = getState().animation.slice();
+    for (let i = 0, p = Promise.resolve(); i < allAnimation.length; i++) {
+        p = p.then(_ => new Promise(resolve => 
+            setTimeout(() => {
+                console.log('In Timeout');
+                dispatch({
+                    type: 'RUN',
+                    animation: allAnimation[i]
+                })
+                resolve();
+        }, 500)
+    ))}
 }
 
 // async thunk action creator => this should be what's dispatched by clicking on a sorting algorithm
@@ -108,7 +114,8 @@ const asyncBubbleSort = array => dispatch => {
             }
         }
     }
-    dispatch(receiveSortedNumbers(clone))
+    dispatch(receiveSortedNumbers(clone));
+    dispatch(runAnimation());
     return clone;   
 }
 
@@ -147,20 +154,33 @@ const animationReducer = (oldState = [], action) => {
     switch (action.type) {
         case 'COMPARE':
             newState.push({ comparison: action.numbers })
-            return newState;
+            return newState
         case 'SORT':
             newState.push({ sort: action.numbers })
-            return newState;
+            return newState
         case 'RESET': 
             newState.push({ reset: action.numbers })
-            return newState;
+            return newState
+        case 'CLEAR_NUMBERS': 
+            return []
+        default:
+            return oldState;
+    }
+}
+const runReducer = (oldState = {}, action) => {
+    switch (action.type) {
+        case 'RUN':
+            return action.animation
+        case 'CLEAR_NUMBERS':
+            return {}
         default:
             return oldState;
     }
 }
 const rootReducer = combineReducers({
     list: listReducer,
-    animation: animationReducer
+    animation: animationReducer,
+    running: runReducer
 })
 
 // Store
@@ -169,6 +189,7 @@ window.store = store;
 window.receiveSort = receiveSort;
 window.receiveCompare = receiveCompare;
 window.animationReducer = animationReducer;
+window.runReducer = runReducer;
 window.a = [2, 7, 1, 4, 9, 3, 8, 10, 1];
 
 
@@ -238,27 +259,12 @@ const list_mapStateToProps = state => (
     {
         numbers: state.list.unsorted,
         sorted: state.list.sorted,
-        animation: Array.from(state.animation) // Maybe we animate after sorted array is finish. And set timeout per anime
+        running: state.running
     }
 );
-const List = ({ numbers, animation }) => {
-    let klass = "";
-    let cloneAnimation = Object.assign([], animation);
+const List = ({ numbers, running }) => {
     const list = numbers.map((number, idx) => {
-        if (cloneAnimation.length > 0) {
-            let anime = cloneAnimation[0];
-            klass = Object.keys(anime)[0];
-            let values = anime[klass];
-            if (values.includes(number)) { 
-                cloneAnimation.shift();
-            }
-            console.log(klass)
-            if (klass === "reset") {
-                debugger
-                klass = "";
-            }
-        }
-        return (<ListItem number={number} key={idx} klass={klass}/>)
+        return (<ListItem number={number} key={idx} running={running}/>)
     })
     return (
         <div>
@@ -285,13 +291,30 @@ const List = ({ numbers, animation }) => {
 const ListContainer = connect(list_mapStateToProps, null)(List);
 
 // ListItem
-const ListItem = ({number, klass}) => {
-    return (
-    <div>
-        <li className={`item ${klass}`} >{number}</li>
-    </div>
+class ListItem extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            klass: ""
+        }
+    }
+    render() {
+        return (
+        <div>
+            <li className={`item ${this.state.klass}`} >{this.props.number}</li>
+        </div>
+        )    
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.running !== this.props.running) {
+            let running = this.props.running;
+            let numbers = Object.values(running)[0];
+            let klass = numbers.includes(this.props.number) ? Object.keys(running)[0] : "";
+            this.setState({klass: klass});
+        }
+    }
+}
 
-)}
 // If I push to the Ul new List Item every add new I can keep the ogIdx the same. 
 // How will I get the newIdx?
 // Maybe the animation tracks the idx and then find the Listitem with state that matches
@@ -352,11 +375,15 @@ const Util = {
         while (unsorted) {
             unsorted = false;
             for (let i = 0; i < length - 1; i++) {
+                console.log('Compares: ', [clone[i], clone[i + 1]])
+                console.log('Reset: ', [clone[i], clone[i + 1]])
                 switch (clone[i] <= clone[i + 1]) {
                     case true:
                         break;
                     case false:
                         [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
+                        console.log('Sort: ', [clone[i], clone[i + 1]]) 
+                        console.log('Reset: ', [clone[i], clone[i + 1]]) // Working on Visualizer
                         unsorted = true;
                         break;
                 }
