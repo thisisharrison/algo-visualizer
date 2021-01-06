@@ -6,6 +6,8 @@ import { Provider, connect } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
+import myNum from './class/myNumber';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const content = document.getElementById('content');
@@ -63,9 +65,19 @@ const receiveCompare = (x, y) => dispatch => {
         numbers: [x, y]
     })
 }
-const receiveSort = (x, y) => dispatch => {
+const receiveSort = (x, y) => (dispatch, getState) => {
     dispatch({
         type: 'SORT',
+        numbers: [x, y]
+    })
+    dispatch({
+        type: 'RESET',
+        numbers: [x, y]
+    })
+}
+const receiveSorted = (x, y) => dispatch => {
+    dispatch({
+        type: 'SORTED',
         numbers: [x, y]
     })
     dispatch({
@@ -84,7 +96,7 @@ const runAnimation = () => (dispatch, getState) => {
                     animation: allAnimation[i]
                 })
                 resolve();
-        }, 500)
+        }, 100)
     ))}
 }
 
@@ -97,7 +109,8 @@ const runAnimation = () => (dispatch, getState) => {
 // Then the reducers should just change the for each _SORT case newState.sorted = action.array
 const asyncBubbleSort = array => dispatch => {
     let unsorted = true;
-    let clone = Object.assign([], array);
+    // let clone = Object.assign([], array);
+    let clone = array.map(e => e.val)
     let length = array.length;
     while (unsorted) {
         unsorted = false;
@@ -105,10 +118,12 @@ const asyncBubbleSort = array => dispatch => {
             dispatch(receiveCompare(clone[i], clone[i + 1]));
             switch (clone[i] <= clone[i + 1]) {
                 case true:
+                    dispatch(receiveSorted(clone[i], clone[i + 1]));
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
                     dispatch(receiveSort(clone[i], clone[i + 1]));
+                    dispatch(receiveSorted(clone[i], clone[i + 1]));
                     unsorted = true;
                     break;
             }
@@ -118,9 +133,21 @@ const asyncBubbleSort = array => dispatch => {
     dispatch(runAnimation());
     return clone;   
 }
+function swapByObject(o1, o2, array) {
+    let i1 = null;
+    let i2 = null;
+    for (let i = 0; i < array.length; i++) {
+        if (i1 !== null & i2 !== null) break;
+        if (i1 === null) i1 = array[i].id === o1.id ? i : null;
+        if (i2 === null) i2 = array[i].id === o2.id ? i : null;
+    }
+    [array[i1], array[i2]] = [array[i2], array[i1]];
+    return array;
+}
 
 // Reducer
-const initialState = { unsorted: [2, 7, 1, 4, 9, 3, 8, 10], sorted: []};
+let example = [2, 7, 1, 4, 9, 3, 8, 10].map((n, i) => new myNum (i, n));
+const initialState = { unsorted: example, sorted: [], sorting: [] };
 const listReducer = (oldState = initialState, action) => {
     Object.freeze(oldState);
     let newState = Object.assign({}, oldState);
@@ -131,9 +158,13 @@ const listReducer = (oldState = initialState, action) => {
         case 'RECEIVE_SORTED_NUMBERS':
             newState.sorted = [...newState.sorted, ...action.numbers]
             return newState;
+        case 'RECEIVE_SORTING':
+            newState.sorting = action.numbers
+            return newState;
         case 'CLEAR_NUMBERS':
             newState.sorted = [];
             newState.unsorted = [];
+            newState.sorting = [];
             return newState;
         case 'QUICK_SORT':
             newState.sorted = Util.quickSort(newState.unsorted);
@@ -157,6 +188,9 @@ const animationReducer = (oldState = [], action) => {
             return newState
         case 'SORT':
             newState.push({ sort: action.numbers })
+            return newState
+        case 'SORTED':
+            newState.push({ sorted: action.numbers })
             return newState
         case 'RESET': 
             newState.push({ reset: action.numbers })
@@ -257,8 +291,8 @@ const ToolbarContainer = connect(toolbar_mapStateToProps, toolbar_mapDispatchToP
 // List
 const list_mapStateToProps = state => (
     {
-        numbers: state.list.unsorted,
-        sorted: state.list.sorted,
+        numbers: state.list.unsorted.map(n => n.val),
+        sorted: state.list.sorted.map(n => n.val),
         running: state.running
     }
 );
@@ -266,6 +300,7 @@ const List = ({ numbers, running }) => {
     const list = numbers.map((number, idx) => {
         return (<ListItem number={number} key={idx} running={running}/>)
     })
+    
     return (
         <div>
             <h1>Inside List</h1>
@@ -301,7 +336,7 @@ class ListItem extends React.Component {
     render() {
         return (
         <div>
-            <li className={`item ${this.state.klass}`} >{this.props.number}</li>
+            <span className="number"><li className={`item ${this.state.klass}`}>{this.props.number}</li></span>
         </div>
         )    
     }

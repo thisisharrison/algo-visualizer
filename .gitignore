@@ -5,3 +5,7 @@ node_modules/
 bundle.js
 bundle.js.map
 *.txt
+
+# Ignore code testing
+test.js
+class
