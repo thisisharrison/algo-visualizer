@@ -55,29 +55,10 @@ const bubbleSort = () => (
         type: 'BUBBLE_SORT'
     }
 )
-const receiveCompare = (x, y) => dispatch => {
+// Not receiving Sorting, why? 
+const receiveAnimation = (x, y, type) => dispatch => {
     dispatch({
-        type: 'COMPARE',
-        numbers: [x, y]
-    })
-    dispatch({
-        type: 'RESET',
-        numbers: [x, y]
-    })
-}
-const receiveSort = (x, y) => (dispatch, getState) => {
-    dispatch({
-        type: 'SORT',
-        numbers: [x, y]
-    })
-    dispatch({
-        type: 'RESET',
-        numbers: [x, y]
-    })
-}
-const receiveSorted = (x, y) => dispatch => {
-    dispatch({
-        type: 'SORTED',
+        type: type,
         numbers: [x, y]
     })
     dispatch({
@@ -87,14 +68,26 @@ const receiveSorted = (x, y) => dispatch => {
 }
 const runAnimation = () => (dispatch, getState) => {
     const allAnimation = getState().animation.slice();
+    const sortingArray = getState().list.sorting;
     for (let i = 0, p = Promise.resolve(); i < allAnimation.length; i++) {
         p = p.then(_ => new Promise(resolve => 
             setTimeout(() => {
                 console.log('In Timeout');
+                let animation = allAnimation[i];
+                let animationType = Object.keys(animation)[0];
+                let animationNumbers = Object.values(animation)[0];
+                let newArray = (animationType === 'sorting') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray
                 dispatch({
                     type: 'RUN',
-                    animation: allAnimation[i]
+                    klass: animationType,
+                    id1: animationNumbers[0].id,
+                    id2: animationNumbers[1].id
                 })
+                dispatch({
+                    type: 'RECEIVE_SORTING',
+                    numbers: newArray
+                })
+                
                 resolve();
         }, 100)
     ))}
@@ -109,21 +102,21 @@ const runAnimation = () => (dispatch, getState) => {
 // Then the reducers should just change the for each _SORT case newState.sorted = action.array
 const asyncBubbleSort = array => dispatch => {
     let unsorted = true;
-    // let clone = Object.assign([], array);
-    let clone = array.map(e => e.val)
+    let clone = Object.assign([], array);
+    // let clone = array.map(e => e.val)
     let length = array.length;
     while (unsorted) {
         unsorted = false;
         for (let i = 0; i < length - 1; i++) {
-            dispatch(receiveCompare(clone[i], clone[i + 1]));
-            switch (clone[i] <= clone[i + 1]) {
+            dispatch(receiveAnimation(clone[i], clone[i + 1], 'COMPARE'));
+            switch (clone[i].val <= clone[i + 1].val) {
                 case true:
-                    dispatch(receiveSorted(clone[i], clone[i + 1]));
+                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTED'));
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
-                    dispatch(receiveSort(clone[i], clone[i + 1]));
-                    dispatch(receiveSorted(clone[i], clone[i + 1]));
+                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTING'));
+                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTED'));
                     unsorted = true;
                     break;
             }
@@ -146,8 +139,8 @@ function swapByObject(o1, o2, array) {
 }
 
 // Reducer
-let example = [2, 7, 1, 4, 9, 3, 8, 10].map((n, i) => new myNum (i, n));
-const initialState = { unsorted: example, sorted: [], sorting: [] };
+let example = [2, 7, 1, 4, 1, 10, 9].map((n, i) => new myNum (i, n));
+const initialState = { unsorted: example, sorted: [], sorting: example };
 const listReducer = (oldState = initialState, action) => {
     Object.freeze(oldState);
     let newState = Object.assign({}, oldState);
@@ -186,8 +179,8 @@ const animationReducer = (oldState = [], action) => {
         case 'COMPARE':
             newState.push({ comparison: action.numbers })
             return newState
-        case 'SORT':
-            newState.push({ sort: action.numbers })
+        case 'SORTING':
+            newState.push({ sorting: action.numbers })
             return newState
         case 'SORTED':
             newState.push({ sorted: action.numbers })
@@ -201,10 +194,10 @@ const animationReducer = (oldState = [], action) => {
             return oldState;
     }
 }
-const runReducer = (oldState = {}, action) => {
+const runReducer = (oldState = {klass: '', id1: '', id2: ''}, action) => {
     switch (action.type) {
         case 'RUN':
-            return action.animation
+            return { klass: action.klass, id1: action.id1, id2: action.id2 }
         case 'CLEAR_NUMBERS':
             return {}
         default:
@@ -220,8 +213,6 @@ const rootReducer = combineReducers({
 // Store
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
 window.store = store;
-window.receiveSort = receiveSort;
-window.receiveCompare = receiveCompare;
 window.animationReducer = animationReducer;
 window.runReducer = runReducer;
 window.a = [2, 7, 1, 4, 9, 3, 8, 10, 1];
@@ -293,12 +284,15 @@ const list_mapStateToProps = state => (
     {
         numbers: state.list.unsorted.map(n => n.val),
         sorted: state.list.sorted.map(n => n.val),
-        running: state.running
+        sorting: state.list.sorting,
+        klass: state.running.klass,
+        id1: state.running.id1,
+        id2: state.running.id2
     }
 );
-const List = ({ numbers, running }) => {
-    const list = numbers.map((number, idx) => {
-        return (<ListItem number={number} key={idx} running={running}/>)
+const List = ({ sorting, klass, id1, id2 }) => {
+    const list = sorting.map((number, idx) => {
+        return (<ListItem number={number} key={idx} klass={klass} id1={id1} id2={id2} />)
     })
     
     return (
@@ -329,25 +323,26 @@ const ListContainer = connect(list_mapStateToProps, null)(List);
 class ListItem extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            klass: ""
-        }
     }
     render() {
+        const { number, klass, id1, id2 } = this.props;
+        let _klass, _number;
+        _klass = (number.id === id1 || number.id === id2) ? klass : "";
+        _number = number.val;
         return (
         <div>
-            <span className="number"><li className={`item ${this.state.klass}`}>{this.props.number}</li></span>
+            <span className="number"><li className={`item ${_klass}`}>{_number}</li></span>
         </div>
         )    
     }
-    componentDidUpdate(prevProps) {
-        if (prevProps.running !== this.props.running) {
-            let running = this.props.running;
-            let numbers = Object.values(running)[0];
-            let klass = numbers.includes(this.props.number) ? Object.keys(running)[0] : "";
-            this.setState({klass: klass});
-        }
-    }
+    // componentDidUpdate(prevProps) {
+    //     if (prevProps.running !== this.props.running) {
+    //         let running = this.props.running;
+    //         let numbers = Object.values(running)[0];
+    //         let klass = numbers.includes(this.props.number) ? Object.keys(running)[0] : "";
+    //         this.setState({klass: klass});
+    //     }
+    // }
 }
 
 // If I push to the Ul new List Item every add new I can keep the ogIdx the same. 
