@@ -76,12 +76,12 @@ const runAnimation = () => (dispatch, getState) => {
                 let animation = allAnimation[i];
                 let animationType = Object.keys(animation)[0];
                 let animationNumbers = Object.values(animation)[0];
-                let newArray = (animationType === 'sorting') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray
+                let newArray = (animationType === 'sorting') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray;
                 dispatch({
                     type: 'RUN',
                     klass: animationType,
-                    id1: animationNumbers[0].id,
-                    id2: animationNumbers[1].id
+                    id1: !animationNumbers[0] ? null: animationNumbers[0].id,
+                    id2: !animationNumbers[1] ? null: animationNumbers[1].id
                 })
                 dispatch({
                     type: 'RECEIVE_SORTING',
@@ -126,6 +126,33 @@ const asyncBubbleSort = array => dispatch => {
     dispatch(runAnimation());
     return clone;   
 }
+const asyncMergeSort = array => dispatch => {
+    if (array.length < 2) return array;
+    let midIdx, length, left, right, sortLeft, sortRight;
+    length = array.length;
+    midIdx = Math.floor(length / 2);
+    left = array.slice(0, midIdx);
+    right = array.slice(midIdx);
+    sortLeft = dispatch(asyncMergeSort(left));
+    sortRight = dispatch(asyncMergeSort(right));
+    return dispatch(asyncMerge(sortLeft, sortRight))
+}
+const asyncMerge = (a1, a2) => dispatch => {
+    let merged, nextItem;
+    merged = [];
+    while (a1.length > 0 && a2.length > 0) {
+        dispatch(receiveAnimation(a1[0], a2[0], 'COMPARE'));
+        if (a1[0].val > a2[0].val) {
+            nextItem = a2.shift();
+            // dispatch(receiveAnimation(a1[0], a2[0], 'SORTING')); // THIS BREAKS
+        } else {
+            nextItem = a1.shift();
+        }
+        dispatch(receiveAnimation(a1[0], a2[0], 'SORTED'));
+        merged.push(nextItem);
+    }
+    return [...merged, ...a1, ...a2];
+}
 function swapByObject(o1, o2, array) {
     let i1 = null;
     let i2 = null;
@@ -151,7 +178,7 @@ const listReducer = (oldState = initialState, action) => {
         case 'RECEIVE_SORTED_NUMBERS':
             newState.sorted = [...newState.sorted, ...action.numbers]
             return newState;
-        case 'RECEIVE_SORTING':
+        case 'RECEIVE_SORTING': // Animates the sorting order
             newState.sorting = action.numbers
             return newState;
         case 'CLEAR_NUMBERS':
@@ -215,8 +242,12 @@ const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk
 window.store = store;
 window.animationReducer = animationReducer;
 window.runReducer = runReducer;
-window.a = [2, 7, 1, 4, 9, 3, 8, 10, 1];
-
+window.a = [2, 7, 1, 4].map((e, i) => new myNum (i, e));
+window.b = [2, 7, 1, 4];
+window.Util = Util;
+window.dispatch = store.dispatch;
+window.asyncMergeSort = asyncMergeSort;
+window.asyncBubbleSort = asyncBubbleSort;
 
 // Components
 const Root = ({ store }) => (
@@ -246,10 +277,16 @@ const toolbar_mapDispatchToProps = dispatch => (
         quickSort: () => dispatch(quickSort()),
         mergeSort: () => dispatch(mergeSort()),
         bubbleSort: () => dispatch(bubbleSort()),
+        asyncMergeSort: (array) => new Promise (resolve => {
+            resolve(dispatch(asyncMergeSort(array)));
+        }).then((sorted) => {
+            dispatch(receiveSortedNumbers(sorted));
+            dispatch(runAnimation());
+        }),
         asyncBubbleSort: (array) => dispatch(asyncBubbleSort(array))
     }
 )
-const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort, asyncBubbleSort }) => {
+const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort, asyncBubbleSort, asyncMergeSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -262,7 +299,7 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Quick Sort
             </button>
             <button type="button"
-                onClick={ mergeSort }>
+                onClick={ (e) => asyncMergeSort(array) }>
                 Merge Sort
             </button>
             <button type="button"
