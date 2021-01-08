@@ -60,13 +60,13 @@ ul {
     top: 0px;
 }
 
-.sort {
+.swapping, .sorting {
     border: 1px solid #8399BF;
     background: #8399BF;
     color: #4463A0;
 }
 
-.sort:before {
+.swapping:before {
     content: '🔄';
     position: absolute;
     top: 0px;

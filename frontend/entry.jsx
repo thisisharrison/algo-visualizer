@@ -1,17 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import logger from 'redux-logger';
+import { combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunk from 'redux-thunk';
+import { configureStore } from './store/store';
+import Root from './components/root';
 
+// Refactor Later
+import { receiveNumber, clearNumbers, receiveSortedNumbers, quickSort, mergeSort, bubbleSort } from './actions/actions';
 import myNum from './class/myNumber';
 
 
 document.addEventListener('DOMContentLoaded', () => {
     const content = document.getElementById('content');
+    const store = configureStore();
     ReactDOM.render(<Root store={store} />, content);
+
+    window.store = store;
+    window.dispatch = store.dispatch;
 });
 
 // Hierarchy:
@@ -22,40 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //         ListContainer
 //             ListItem
 
-// Action
-const receiveNumber = (number) => (
-    {
-        type: 'RECEIVE_NUMBER',
-        number
-    }
-)
-const clearNumbers = () => (
-    {
-        type: 'CLEAR_NUMBERS'
-    }
-)
-const receiveSortedNumbers = (numbers) => (
-    {
-        type: 'RECEIVE_SORTED_NUMBERS',
-        numbers
-    }
-)
-const quickSort = () => (
-    {
-        type: 'QUICK_SORT'
-    }
-)
-const mergeSort = () => (
-    {
-        type: 'MERGE_SORT'
-    }
-)
-const bubbleSort = () => (
-    {
-        type: 'BUBBLE_SORT'
-    }
-)
-// Not receiving Sorting, why? 
+
 const receiveAnimation = (x, y, type) => dispatch => {
     dispatch({
         type: type,
@@ -76,7 +48,8 @@ const runAnimation = () => (dispatch, getState) => {
                 let animation = allAnimation[i];
                 let animationType = Object.keys(animation)[0];
                 let animationNumbers = Object.values(animation)[0];
-                let newArray = (animationType === 'sorting') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray;
+                let newArray = (animationType === 'swapping') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray;
+                // if (animationType === 'one-side-sorting') ? // TO DO
                 dispatch({
                     type: 'RUN',
                     klass: animationType,
@@ -89,21 +62,24 @@ const runAnimation = () => (dispatch, getState) => {
                 })
                 
                 resolve();
-        }, 100)
+        }, 250)
     ))}
 }
-
-// async thunk action creator => this should be what's dispatched by clicking on a sorting algorithm
-// const asyncMergeSort = array => dispatch => ({
-    // merge sort algorithm
-    // dispatch(compare(...))
-    // dispatch(sort())
-// })
-// Then the reducers should just change the for each _SORT case newState.sorted = action.array
+function swapByObject(o1, o2, array) {
+    if (o1 === undefined || o2 === undefined) return array;
+    let i1 = null;
+    let i2 = null;
+    for (let i = 0; i < array.length; i++) {
+        if (i1 !== null & i2 !== null) break;
+        if (i1 === null) i1 = array[i].id === o1.id ? i : null;
+        if (i2 === null) i2 = array[i].id === o2.id ? i : null;
+    }
+    [array[i1], array[i2]] = [array[i2], array[i1]];
+    return array;
+}
 const asyncBubbleSort = array => dispatch => {
     let unsorted = true;
     let clone = Object.assign([], array);
-    // let clone = array.map(e => e.val)
     let length = array.length;
     while (unsorted) {
         unsorted = false;
@@ -115,7 +91,7 @@ const asyncBubbleSort = array => dispatch => {
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
-                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTING'));
+                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SWAPPING'));
                     dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTED'));
                     unsorted = true;
                     break;
@@ -134,7 +110,9 @@ const asyncMergeSort = array => dispatch => {
     left = array.slice(0, midIdx);
     right = array.slice(midIdx);
     sortLeft = dispatch(asyncMergeSort(left));
+    // dispatch(animateSortedSide(sortLeft, right))
     sortRight = dispatch(asyncMergeSort(right));
+    // dispatch(animateSortedSide(sortLeft, sortRight))
     return dispatch(asyncMerge(sortLeft, sortRight))
 }
 const asyncMerge = (a1, a2) => dispatch => {
@@ -144,29 +122,21 @@ const asyncMerge = (a1, a2) => dispatch => {
         dispatch(receiveAnimation(a1[0], a2[0], 'COMPARE'));
         if (a1[0].val > a2[0].val) {
             nextItem = a2.shift();
-            // dispatch(receiveAnimation(a1[0], a2[0], 'SORTING')); // THIS BREAKS
         } else {
             nextItem = a1.shift();
         }
-        dispatch(receiveAnimation(a1[0], a2[0], 'SORTED'));
         merged.push(nextItem);
     }
+    // animate sorting one side // TO DO
+    // We should tear down the subarray from full array
+    // render sorted subarray and unsorted other half
+    // render one number at a time
+    // need a new action creator 
     return [...merged, ...a1, ...a2];
-}
-function swapByObject(o1, o2, array) {
-    let i1 = null;
-    let i2 = null;
-    for (let i = 0; i < array.length; i++) {
-        if (i1 !== null & i2 !== null) break;
-        if (i1 === null) i1 = array[i].id === o1.id ? i : null;
-        if (i2 === null) i2 = array[i].id === o2.id ? i : null;
-    }
-    [array[i1], array[i2]] = [array[i2], array[i1]];
-    return array;
 }
 
 // Reducer
-let example = [2, 7, 1, 4, 1, 10, 9].map((n, i) => new myNum (i, n));
+let example = [2, 7, 1, 4, 3, 1, 6, 5].map((n, i) => new myNum (i, n));
 const initialState = { unsorted: example, sorted: [], sorting: example };
 const listReducer = (oldState = initialState, action) => {
     Object.freeze(oldState);
@@ -206,8 +176,8 @@ const animationReducer = (oldState = [], action) => {
         case 'COMPARE':
             newState.push({ comparison: action.numbers })
             return newState
-        case 'SORTING':
-            newState.push({ sorting: action.numbers })
+        case 'SWAPPING':
+            newState.push({ swapping: action.numbers })
             return newState
         case 'SORTED':
             newState.push({ sorted: action.numbers })
@@ -231,34 +201,25 @@ const runReducer = (oldState = {klass: '', id1: '', id2: ''}, action) => {
             return oldState;
     }
 }
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     list: listReducer,
     animation: animationReducer,
     running: runReducer
 })
 
 // Store
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk, logger)));
-window.store = store;
+
 window.animationReducer = animationReducer;
 window.runReducer = runReducer;
 window.a = [2, 7, 1, 4].map((e, i) => new myNum (i, e));
 window.b = [2, 7, 1, 4];
 window.Util = Util;
-window.dispatch = store.dispatch;
+
 window.asyncMergeSort = asyncMergeSort;
 window.asyncBubbleSort = asyncBubbleSort;
 
 // Components
-const Root = ({ store }) => (
-    <div>
-        <h1>Inside Provider</h1>
-        <Provider store={store}>
-            <App />
-        </Provider>
-    </div>
-)
-const App = () => (
+export const App = () => (
     <div>
         <h1>Inside App</h1>
         <ToolbarContainer />
@@ -341,19 +302,6 @@ const List = ({ sorting, klass, id1, id2 }) => {
         </div>
     )
 }
-// class List extends React.Component {
-//     render() {
-//         const list = this.props.numbers.map((number, idx) => <ListItem number={number} key={idx} ogIdx={idx}/>)
-//         return (
-//             <div>
-//                 <h1>Inside List</h1>
-//                 <ul className="list">
-//                     {list}
-//                 </ul>
-//             </div>
-//         )
-//     }
-// }
 const ListContainer = connect(list_mapStateToProps, null)(List);
 
 // ListItem
@@ -382,29 +330,6 @@ class ListItem extends React.Component {
     // }
 }
 
-// If I push to the Ul new List Item every add new I can keep the ogIdx the same. 
-// How will I get the newIdx?
-// Maybe the animation tracks the idx and then find the Listitem with state that matches
-// and then change that ListItem?
-// class ListItem extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             ogIdx: this.props.ogIdx,
-//             newIdx: "",
-//             compare: false,
-//             swap: false,
-//             active: true
-//         }
-//     }
-//     render(){
-//         const number = this.props.number;
-//         return(
-//         <li className="item">{number}</li>
-//         )
-//     }
-// }
-
 
 // Util
 const Util = {
@@ -415,7 +340,6 @@ const Util = {
     },
     mergeSort(array) {
         if (array.length < 2) return array;
-        console.log('Active: ', array) // Working on Visualizer
         let midIdx, length, left, right, sortLeft, sortRight;
         length = array.length;
         midIdx = Math.floor(length / 2);
@@ -431,6 +355,7 @@ const Util = {
         while (a1.length > 0 && a2.length > 0) {
             console.log('Comparison: ', a1[0], a2[0]) // Working on Visualizer
             nextItem = (a1[0] > a2[0]) ? a2.shift() : a1.shift();
+            console.log('Sort: ', a1[0], a2[0])
             merged.push(nextItem);
         }
         return [...merged, ...a1, ...a2];
@@ -476,49 +401,4 @@ const Util = {
         return sortSmaller.concat(sortLarger);
     }
 }
-export default Util;
 window.Util = Util;
-
-// Using thunk to create UI of sorting indexes 
-// However, Indexes will change.
-// List Reducer should keep original index and new index order
-function animateSort(state) {
-    return function (dispatch) {
-        let array = state.animation
-        for (subarray of array) {
-            setTimeout(() => {
-                dispatch(comparison(subarray))
-            }, 5000) // Maybe needs some kind of promise, if doesn't need to sort
-            setTimeout(() => {
-                dispatch(swap(subarray))
-            }, 10000) // So we will have 5 sec between compare and swap cycle
-        }
-    }
-}
-// If we could track index changes
-// [0,1,2,3,4,5]
-// [1,0,2,3,4,5]
-// [1,0,3,2,4,5]
-// Maybe a reducer with a state tree like 
-// {
-//     animation: 
-//     [
-//         {
-//             comparison: [1, 2]
-//         },
-//         {
-//             swap: [1, 2]
-//         },
-//         {
-//             comparison: [3, 4]
-//         },
-//         {
-//             swap: [3, 4]
-//         }
-//     ]
-// },
-//      list: {
-//              unsorted: [],
-//              sorted: []
-//          }
-// }
