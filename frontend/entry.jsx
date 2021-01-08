@@ -6,8 +6,9 @@ import { configureStore } from './store/store';
 import Root from './components/root';
 
 // Refactor Later
-import { receiveNumber, clearNumbers, receiveSortedNumbers, quickSort, mergeSort, bubbleSort } from './actions/actions';
+import { receiveNumber, clearNumbers, receiveSortedNumbers, receiveSorting, quickSort, mergeSort, bubbleSort } from './actions/actions';
 import myNum from './class/myNumber';
+import Util from './util/util';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.store = store;
     window.dispatch = store.dispatch;
+    window.Util = Util;
 });
 
 // Hierarchy:
@@ -47,7 +49,6 @@ const runAnimation = () => (dispatch, getState) => {
                 console.log('In Timeout');
                 let animation = allAnimation[i];
                 let animationType = Object.keys(animation)[0];
-                debugger
                 let animationNumbers = Object.values(animation)[0];
                 let newArray = (animationType === 'swapping') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray;
                 // if (animationType === 'one-side-sorting') ? // TO DO
@@ -58,11 +59,11 @@ const runAnimation = () => (dispatch, getState) => {
                     // id1: !animationNumbers[0] ? null: animationNumbers[0].id,
                     // id2: !animationNumbers[1] ? null: animationNumbers[1].id
                 })
-                dispatch({
-                    type: 'RECEIVE_SORTING',
-                    numbers: newArray
-                })
-                
+                dispatch(receiveSorting(newArray));
+                // {
+                //     type: 'RECEIVE_SORTING',
+                //     numbers: 
+                // })
                 resolve();
         }, 250)
     ))}
@@ -129,17 +130,35 @@ const asyncMerge = (a1, a2) => dispatch => {
         }
         merged.push(nextItem);
     }
-    // animate sorting one side // TO DO
-    // We should tear down the subarray from full array
-    // render sorted subarray and unsorted other half
-    // render one number at a time
-    // need a new action creator 
+    // TO DO
+    // dispatch(receiveSubarrayMerge([...merged, ...a1, ...a2])); // Only Issue: Runs before highlights 
+    
+    // Could we write a function that holds a like of highlight and sorting in order 
+    // Then use the run Animation method to run highlights and sort
+
     dispatch(receiveAnimation([...merged, ...a1, ...a2], 'SORTED'))
     return [...merged, ...a1, ...a2];
+}
+const receiveSubarrayMerge = subarray => (dispatch, getState) => {
+    let indexes = [];
+    let array = getState().list.sorting;
+    for (let i = 0; i < subarray.length; i++) {
+        let k = array.findIndex(el => el.id == subarray[i].id);
+        indexes.push(k);
+        if (indexes.length === subarray.length) break;
+    }
+    // Smallest index 
+    let minIndex = indexes.sort()[0];
+    let numbers = [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
+    dispatch(receiveSorting(numbers));
 }
 
 // Reducer
 let example = [2, 7, 1, 4, 3, 1, 6, 5].map((n, i) => new myNum (i, n));
+let subarray = [new myNum (2, 1), new myNum (1, 7)]
+window.subarray = subarray
+window.receiveSubarrayMerge = receiveSubarrayMerge;
+window.receiveSorting = receiveSorting;
 const initialState = { unsorted: example, sorted: [], sorting: example };
 const listReducer = (oldState = initialState, action) => {
     Object.freeze(oldState);
@@ -184,7 +203,7 @@ const animationReducer = (oldState = [], action) => {
             return newState
         case 'SORTED':
             newState.push({ sorted: action.numbers })
-            return newState
+            return newState    
         case 'RESET': 
             newState.push({ reset: action.numbers })
             return newState
@@ -216,8 +235,6 @@ window.animationReducer = animationReducer;
 window.runReducer = runReducer;
 window.a = [2, 7, 1, 4].map((e, i) => new myNum (i, e));
 window.b = [2, 7, 1, 4];
-window.Util = Util;
-
 window.asyncMergeSort = asyncMergeSort;
 window.asyncBubbleSort = asyncBubbleSort;
 
@@ -335,77 +352,4 @@ class ListItem extends React.Component {
     // }
 }
 
-
-// Util
-const Util = {
-    randomNumber(min = 1, max = 99) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min) + min);
-    },
-    mergeSort(array) {
-        if (array.length < 2) return array;
-        let midIdx, length, left, right, sortLeft, sortRight;
-        length = array.length;
-        midIdx = Math.floor(length / 2);
-        left = array.slice(0, midIdx);
-        right = array.slice(midIdx);
-        sortLeft = Util.mergeSort(left); 
-        sortRight = Util.mergeSort(right);
-        return Util.merge(sortLeft, sortRight);
-    },
-    merge(a1, a2) {
-        let merged, nextItem;
-        merged = [];
-        while (a1.length > 0 && a2.length > 0) {
-            console.log('Comparison: ', a1[0], a2[0]) // Working on Visualizer
-            nextItem = (a1[0] > a2[0]) ? a2.shift() : a1.shift();
-            console.log('Sort: ', a1[0], a2[0])
-            merged.push(nextItem);
-        }
-        let x = [...merged, ...a1, ...a2];
-        console.log('Sorted: ', x);
-        return x;
-    },
-    bubbleSort(array) {
-        let unsorted = true;
-        let clone = Object.assign([], array);
-        let length = array.length;
-        while (unsorted) {
-            unsorted = false;
-            for (let i = 0; i < length - 1; i++) {
-                console.log('Compares: ', [clone[i], clone[i + 1]])
-                console.log('Reset: ', [clone[i], clone[i + 1]])
-                switch (clone[i] <= clone[i + 1]) {
-                    case true:
-                        break;
-                    case false:
-                        [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
-                        console.log('Sort: ', [clone[i], clone[i + 1]]) 
-                        console.log('Reset: ', [clone[i], clone[i + 1]]) // Working on Visualizer
-                        unsorted = true;
-                        break;
-                }
-            }
-        }
-        return clone;
-    },
-    quickSort(array) {
-        if (array.length < 2) return array;
-        let pivot = array[0];
-        let smaller = [];
-        let larger = [];
-        array.slice(1).forEach(num => {
-            if(num <= pivot) {
-                smaller.push(num);
-            } else {
-                larger.push(num);
-            }
-        })
-        let sortSmaller = Util.quickSort(smaller);
-        let sortLarger = Util.quickSort(larger);
-        sortSmaller.push(pivot)
-        return sortSmaller.concat(sortLarger);
-    }
-}
 window.Util = Util;

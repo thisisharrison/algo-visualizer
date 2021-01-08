@@ -15,6 +15,12 @@ export const receiveSortedNumbers = (numbers) => (
         numbers
     }
 )
+export const receiveSorting = numbers => (
+    {
+        type: 'RECEIVE_SORTING',
+        numbers
+    }
+)
 export const quickSort = () => (
     {
         type: 'QUICK_SORT'
