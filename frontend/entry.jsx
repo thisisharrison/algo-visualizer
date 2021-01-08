@@ -28,14 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
 //             ListItem
 
 
-const receiveAnimation = (x, y, type) => dispatch => {
+const receiveAnimation = (numbers, type) => dispatch => {
     dispatch({
         type: type,
-        numbers: [x, y]
+        numbers
     })
     dispatch({
         type: 'RESET',
-        numbers: [x, y]
+        numbers
     })
 }
 const runAnimation = () => (dispatch, getState) => {
@@ -47,14 +47,16 @@ const runAnimation = () => (dispatch, getState) => {
                 console.log('In Timeout');
                 let animation = allAnimation[i];
                 let animationType = Object.keys(animation)[0];
+                debugger
                 let animationNumbers = Object.values(animation)[0];
                 let newArray = (animationType === 'swapping') ? swapByObject(animationNumbers[0], animationNumbers[1], sortingArray) : sortingArray;
                 // if (animationType === 'one-side-sorting') ? // TO DO
                 dispatch({
                     type: 'RUN',
                     klass: animationType,
-                    id1: !animationNumbers[0] ? null: animationNumbers[0].id,
-                    id2: !animationNumbers[1] ? null: animationNumbers[1].id
+                    ids: animationNumbers.map(num => !num ?  null : num.id)
+                    // id1: !animationNumbers[0] ? null: animationNumbers[0].id,
+                    // id2: !animationNumbers[1] ? null: animationNumbers[1].id
                 })
                 dispatch({
                     type: 'RECEIVE_SORTING',
@@ -84,15 +86,15 @@ const asyncBubbleSort = array => dispatch => {
     while (unsorted) {
         unsorted = false;
         for (let i = 0; i < length - 1; i++) {
-            dispatch(receiveAnimation(clone[i], clone[i + 1], 'COMPARE'));
+            dispatch(receiveAnimation([clone[i], clone[i + 1]], 'COMPARE'));
             switch (clone[i].val <= clone[i + 1].val) {
                 case true:
-                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTED'));
+                    dispatch(receiveAnimation([clone[i], clone[i + 1]], 'SORTED'));
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
-                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SWAPPING'));
-                    dispatch(receiveAnimation(clone[i], clone[i + 1], 'SORTED'));
+                    dispatch(receiveAnimation([clone[i], clone[i + 1]], 'SWAPPING'));
+                    dispatch(receiveAnimation([clone[i], clone[i + 1]], 'SORTED'));
                     unsorted = true;
                     break;
             }
@@ -119,7 +121,7 @@ const asyncMerge = (a1, a2) => dispatch => {
     let merged, nextItem;
     merged = [];
     while (a1.length > 0 && a2.length > 0) {
-        dispatch(receiveAnimation(a1[0], a2[0], 'COMPARE'));
+        dispatch(receiveAnimation([a1[0], a2[0]], 'COMPARE'));
         if (a1[0].val > a2[0].val) {
             nextItem = a2.shift();
         } else {
@@ -132,6 +134,7 @@ const asyncMerge = (a1, a2) => dispatch => {
     // render sorted subarray and unsorted other half
     // render one number at a time
     // need a new action creator 
+    dispatch(receiveAnimation([...merged, ...a1, ...a2], 'SORTED'))
     return [...merged, ...a1, ...a2];
 }
 
@@ -191,10 +194,10 @@ const animationReducer = (oldState = [], action) => {
             return oldState;
     }
 }
-const runReducer = (oldState = {klass: '', id1: '', id2: ''}, action) => {
+const runReducer = (oldState = {klass: '', id1: '', id2: '', ids: ''}, action) => {
     switch (action.type) {
         case 'RUN':
-            return { klass: action.klass, id1: action.id1, id2: action.id2 }
+            return { klass: action.klass, id1: action.id1, id2: action.id2 , ids: action.ids}
         case 'CLEAR_NUMBERS':
             return {}
         default:
@@ -284,13 +287,14 @@ const list_mapStateToProps = state => (
         sorted: state.list.sorted.map(n => n.val),
         sorting: state.list.sorting,
         klass: state.running.klass,
-        id1: state.running.id1,
-        id2: state.running.id2
+        ids: state.running.ids
+        // id1: state.running.id1,
+        // id2: state.running.id2
     }
 );
-const List = ({ sorting, klass, id1, id2 }) => {
+const List = ({ sorting, klass, id1, id2, ids }) => {
     const list = sorting.map((number, idx) => {
-        return (<ListItem number={number} key={idx} klass={klass} id1={id1} id2={id2} />)
+        return (<ListItem number={number} key={idx} klass={klass} id1={id1} id2={id2} ids={ids}/>)
     })
     
     return (
@@ -310,9 +314,10 @@ class ListItem extends React.Component {
         super(props)
     }
     render() {
-        const { number, klass, id1, id2 } = this.props;
+        const { number, klass, id1, id2, ids } = this.props;
         let _klass, _number;
-        _klass = (number.id === id1 || number.id === id2) ? klass : "";
+        // _klass = (number.id === id1 || number.id === id2) ? klass : "";
+        _klass = (ids && ids.includes(number.id)) ? klass : "";
         _number = number.val;
         return (
         <div>
@@ -358,7 +363,9 @@ const Util = {
             console.log('Sort: ', a1[0], a2[0])
             merged.push(nextItem);
         }
-        return [...merged, ...a1, ...a2];
+        let x = [...merged, ...a1, ...a2];
+        console.log('Sorted: ', x);
+        return x;
     },
     bubbleSort(array) {
         let unsorted = true;
