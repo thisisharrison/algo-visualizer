@@ -12,3 +12,16 @@ const Root = ({ store }) => (
 )
 
 export default Root;
+
+/*
+Consider: 
+<Provider>
+    <Layout>
+<Provider>
+
+<Layout>
+    <Navbar>
+    <Toolbar>
+    <Content component = <List>/ <Bar>/ <Graph> > // Depending on Navbar and URL
+<Layout> 
+*/

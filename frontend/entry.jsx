@@ -7,6 +7,9 @@ import Root from './components/root';
 
 // Refactor Later
 import { receiveNumber, clearNumbers, receiveSortedNumbers, receiveSorting, quickSort, mergeSort, bubbleSort } from './actions/actions';
+import { compare, reset } from './actions/highlight_actions';
+import { reorder } from './actions/order_actions';
+// import animationReducer from './reducers/animation_reducer';
 import myNum from './class/myNumber';
 import Util from './util/util';
 
@@ -16,18 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const store = configureStore();
     ReactDOM.render(<Root store={store} />, content);
 
+    // TESTED
     window.store = store;
     window.dispatch = store.dispatch;
+    window.compare = compare; 
+    window.reset = reset;
+    window.reorder = reorder;
+    // TESTING
+    // window.animationReducer = animationReducer;
+    
     window.Util = Util;
 });
 
-// Hierarchy:
-// Root
-//     App (Top-level concern)
-//         ToolbarContainer
-//             Toolbar
-//         ListContainer
-//             ListItem
+export const SPEED = 2000;
 
 
 const receiveAnimation = (numbers, type) => dispatch => {
@@ -130,12 +134,6 @@ const asyncMerge = (a1, a2) => dispatch => {
         }
         merged.push(nextItem);
     }
-    // TO DO
-    // dispatch(receiveSubarrayMerge([...merged, ...a1, ...a2])); // Only Issue: Runs before highlights 
-    
-    // Could we write a function that holds a like of highlight and sorting in order 
-    // Then use the run Animation method to run highlights and sort
-
     dispatch(receiveAnimation([...merged, ...a1, ...a2], 'SORTED'))
     return [...merged, ...a1, ...a2];
 }
