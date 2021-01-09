@@ -28,23 +28,24 @@ export const receiveReset = (numbers) => (
         numbers
     }
 )
-
-export const compare = numbers => dispatch => (
+// dispatch(highlightCompare([1,2])).then(() => dispatch(highlightCompare([1,2])))
+// IT WORKED!
+export const highlightCompare = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
     .then(() => dispatch(receiveCompare(numbers)))
 )
 
-export const swap = numbers => dispatch => (
+export const highlightSwap = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveSwap(numbers)))
 )
 
-export const sorted = numbers => dispatch => (
+export const highlightSorted = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveSorted(numbers)))
 )
 
-export const reset = numbers => dispatch => (
+export const highlightReset = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveSorted(numbers)))
 )

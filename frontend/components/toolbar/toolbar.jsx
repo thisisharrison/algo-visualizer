@@ -18,7 +18,7 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
             </button>
             <button type="button"
                 // onClick={bubbleSort}
-                onClick={(e) => asyncBubbleSort(array)}>
+                onClick={(e) => bubbleSort(array)}>
                 Bubble Sort
             </button>
             <button type="button"
