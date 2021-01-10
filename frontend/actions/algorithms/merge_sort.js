@@ -2,7 +2,8 @@ import {
     highlightCompare,
     highlightSwap,
     highlightSorted,
-    highlightReset
+    highlightReset,
+    highlightSubarray
 } from '../highlight_actions';
 import { reorder } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
@@ -17,6 +18,8 @@ export const actualMergeSort = array => dispatch => {
     midIdx = Math.floor(length / 2);
     left = array.slice(0, midIdx);
     right = array.slice(midIdx);
+    dispatch(receiveAnimation(highlightSubarray(left)));
+    dispatch(receiveAnimation(highlightSubarray(right)));
     sortLeft = dispatch(actualMergeSort(left));
     sortRight = dispatch(actualMergeSort(right));
     return dispatch(merge(sortLeft, sortRight))
@@ -27,14 +30,15 @@ export const merge = (a1, a2) => dispatch => {
     merged = [];
     while (a1.length > 0 && a2.length > 0) {
         dispatch(receiveAnimation(highlightCompare([a1[0], a2[0]])));
-        dispatch(receiveAnimation(highlightReset([a1[0], a2[0]])));
         if (a1[0].val > a2[0].val) {
             nextItem = a2.shift();
         } else {
             nextItem = a1.shift();
         }
         merged.push(nextItem);
-        dispatch(receiveAnimation(reorder(merged)));
+        if (merged.length > 1) {
+            dispatch(receiveAnimation(reorder(merged))); 
+        }
     }
     dispatch(receiveAnimation(reorder([...merged, ...a1, ...a2])));
     dispatch(receiveAnimation(highlightSorted([...merged, ...a1, ...a2])))

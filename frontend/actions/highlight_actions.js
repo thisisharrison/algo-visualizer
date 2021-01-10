@@ -2,6 +2,7 @@ export const RECEIVE_COMPARE = 'RECEIVE_COMPARE';
 export const RECEIVE_SWAP = 'RECEIVE_SWAP';
 export const RECEIVE_SORTED = 'RECEIVE_SORTED';
 export const RECEIVE_RESET = 'RECEIVE_RESET';
+export const RECEIVE_SUBARRAY = 'RECEIVE_SUBARRAY';
 import { SPEED } from '../entry';
 
 export const receiveCompare = (numbers) => (
@@ -28,6 +29,12 @@ export const receiveReset = (numbers) => (
         numbers
     }
 )
+export const receiveSubarray = (numbers) => (
+    {
+        type: RECEIVE_SUBARRAY,
+        numbers
+    }
+)
 // dispatch(highlightCompare([1,2])).then(() => dispatch(highlightCompare([1,2])))
 // IT WORKED!
 export const highlightCompare = numbers => dispatch => (
@@ -48,4 +55,9 @@ export const highlightSorted = numbers => dispatch => (
 export const highlightReset = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveSorted(numbers)))
+)
+
+export const highlightSubarray = numbers => dispatch => (
+    new Promise(resolve => setTimeout(() => resolve(), SPEED))
+        .then(() => dispatch(receiveSubarray(numbers)))
 )

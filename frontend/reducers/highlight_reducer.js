@@ -2,7 +2,8 @@ import {
     RECEIVE_COMPARE,
     RECEIVE_SWAP,
     RECEIVE_SORTED,
-    RECEIVE_RESET
+    RECEIVE_RESET,
+    RECEIVE_SUBARRAY
 } from '../actions/highlight_actions';
 import { CLEAR_NUMBERS } from '../actions/list_actions';
 
@@ -17,6 +18,8 @@ const highlightReducer = (state = {}, action) => {
             return { sorted: action.numbers }
         case RECEIVE_RESET:
             return { reset: action.numbers }
+        case RECEIVE_SUBARRAY:
+            return { subarray: action.numbers }
         case CLEAR_NUMBERS: 
             return {}
         default:

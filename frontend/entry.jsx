@@ -117,19 +117,42 @@ export const SPEED = 500;
 //     dispatch(receiveAnimation([...merged, ...a1, ...a2], 'SORTED'))
 //     return [...merged, ...a1, ...a2];
 // }
-// const receiveSubarrayMerge = subarray => (dispatch, getState) => {
-//     let indexes = [];
-//     let array = getState().list.sorting;
-//     for (let i = 0; i < subarray.length; i++) {
-//         let k = array.findIndex(el => el.id == subarray[i].id);
-//         indexes.push(k);
-//         if (indexes.length === subarray.length) break;
-//     }
-//     // Smallest index 
-//     let minIndex = indexes.sort()[0];
-//     let numbers = [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
-//     dispatch(receiveSorting(numbers));
-// }
+window.q = [1, 2, 3, 4]
+window.w = [2, 4, 5, 6, 1, 3, 8, 9]
+// [1, 2, 4, 5, 6, 7, 8, 9]
+window.receiveSubarrayMerge = (subarray, array) => {
+    let indexes = [];
+    for (let i = 0; i < subarray.length; i++) {
+        let k = array.findIndex(el => el == subarray[i]);
+        indexes.push(k);
+    }
+    // Smallest index 
+    let minIndex = indexes.sort((a, b) => a - b)[0];
+    return [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
+}
+// Find subarray smallest index 
+// Delete subarray numbers from array
+// Insert subarray from smallest index
+// Concat the rest 
+window.insertMerge = (subarray, array) => {
+    let indexes = [];
+    for (let i = 0; i < subarray.length; i++) {
+        let k = array.findIndex(el => el == subarray[i]);
+        indexes.push(k);
+    }
+    // Smallest index 
+    let minIndex = indexes.sort((a, b) => a - b)[0];
+    let without = array.filter(n => !subarray.includes(n));
+    return [...without.slice(0, minIndex), ...subarray, ...without.slice(minIndex)]
+}
+ 
+
+
+
+
+
+
+
 
 // // Reducer
 // let example = [2, 7, 1, 4, 3, 1, 6, 5].map((n, i) => new myNum (i, n));

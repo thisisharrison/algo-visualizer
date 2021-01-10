@@ -60,13 +60,13 @@ ul {
     top: 0px;
 }
 
-.swapping, .sorting {
+.swap, .sorting {
     border: 1px solid #8399BF;
     background: #8399BF;
     color: #4463A0;
 }
 
-.swapping:before {
+.swap:before {
     content: '🔄';
     position: absolute;
     top: 0px;
@@ -86,6 +86,12 @@ ul {
 .unsorted {
     border: 1px solid #7B869B;
     color: #7B869B;
+}
+
+.subarray {
+    border: 1px solid turquoise;
+    background-color: turquoise;
+    color: white;
 }
 
 .number {
