@@ -4,6 +4,7 @@ import {
     RECEIVE_SORTED,
     RECEIVE_RESET
 } from '../actions/highlight_actions';
+import { CLEAR_NUMBERS } from '../actions/list_actions';
 
 const highlightReducer = (state = {}, action) => {
     Object.freeze(state);
@@ -16,6 +17,8 @@ const highlightReducer = (state = {}, action) => {
             return { sorted: action.numbers }
         case RECEIVE_RESET:
             return { reset: action.numbers }
+        case CLEAR_NUMBERS: 
+            return {}
         default:
             return state;
     }

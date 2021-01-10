@@ -1,26 +1,25 @@
 import { connect } from 'react-redux';
-import Toolbar from './toolbar';
 import { bubbleSort } from '../../actions/algorithms/bubble_sort';
+import { mergeSort } from '../../actions/algorithms/merge_sort';
+import { addNumber, clearNumbers } from '../../actions/list_actions';
+import { getArray } from '../../reducers/selectors';
+import Util from '../../util/util';
+import Toolbar from './toolbar';
 
-const toolbar_mapStateToProps = state => ({
-    array: state.list.unsorted
-})
-const toolbar_mapDispatchToProps = dispatch => (
+const mapStateToProps = state => (
     {
-        receiveNumber: () => dispatch(receiveNumber(Util.randomNumber())),
-        clearNumbers: () => dispatch(clearNumbers()),
-        quickSort: () => dispatch(quickSort()),
-        mergeSort: () => dispatch(mergeSort()),
-        bubbleSort: (array) => dispatch(bubbleSort(array)),
-        asyncMergeSort: (array) => new Promise(resolve => {
-            resolve(dispatch(asyncMergeSort(array)));
-        }).then((sorted) => {
-            dispatch(receiveSortedNumbers(sorted));
-            dispatch(runAnimation());
-        })
-        // ,
-        // asyncBubbleSort: (array) => dispatch(asyncBubbleSort(array))
+        array: getArray(state)
     }
 )
 
-export default connect(toolbar_mapStateToProps, toolbar_mapDispatchToProps)(Toolbar);
+const mapDispatchToProps = dispatch => (
+    {
+        receiveNumber: () => dispatch(addNumber(Util.randomNumber())),
+        clearNumbers: () => dispatch(clearNumbers()),
+        // quickSort: () => dispatch(quickSort()),
+        mergeSort: (array) => dispatch(mergeSort(array)),
+        bubbleSort: (array) => dispatch(bubbleSort(array)),
+    }
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

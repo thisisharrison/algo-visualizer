@@ -1,3 +1,5 @@
+import myNum from "../class/myNumber";
+
 export const RECEIVE_NUMBER = 'RECEIEVE_NUMBER';
 export const CLEAR_NUMBERS = 'CLEAR_NUMBERS';
 export const RECEIVE_SORTED_NUMBERS = 'RECEIVE_SORTED_NUMBERS';
@@ -19,3 +21,8 @@ export const receiveSortedNumbers = (numbers) => (
         numbers
     }
 )
+
+export const addNumber = number => (dispatch, getState) => {
+    const idx = getState().list.unsorted.length;
+    dispatch(receiveNumber(new myNum(idx, number)));
+}

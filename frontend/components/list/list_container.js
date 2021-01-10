@@ -1,15 +1,13 @@
 import { connect } from 'react-redux';
+import { highlightIds, highlightType } from '../../reducers/selectors';
+import { getNumbers, getArray } from '../../reducers/selectors';
 import List from './list';
 
-const list_mapStateToProps = state => (
+const mapStateToProps = (state, ownProps) => (
     {
-        numbers: state.list.unsorted.map(n => n.val),
-        sorted: state.list.sorted.map(n => n.val),
-        sorting: state.list.sorting,
-        klass: state.running.klass,
-        ids: state.running.ids
-        // id1: state.running.id1,
-        // id2: state.running.id2
+        numbers: getArray(state),
+        klass: highlightType(state),
+        ids: highlightIds(state)
     }
 );
-export default connect(list_mapStateToProps, null)(List);
+export default connect(mapStateToProps, null)(List);

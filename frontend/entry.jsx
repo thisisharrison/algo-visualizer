@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.Util = Util;
 });
 
-export const SPEED = 2000;
+export const SPEED = 500;
 
 
 // const runAnimation = () => (dispatch, getState) => {

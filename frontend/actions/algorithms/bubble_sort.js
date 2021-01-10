@@ -4,6 +4,7 @@ import {
     highlightSorted,
     highlightReset
 } from '../highlight_actions';
+import { reorder } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
 import { receiveSortedNumbers } from '../list_actions';
 import { playAnimation } from '../animation_actions';
@@ -23,6 +24,7 @@ export const actualBubbleSort = array => dispatch => {
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
                     dispatch(receiveAnimation(highlightSwap([clone[i], clone[i + 1]])));
+                    dispatch(receiveAnimation(reorder([clone[i], clone[i + 1]])));
                     dispatch(receiveAnimation(highlightSorted([clone[i], clone[i + 1]])));
                     unsorted = true;
                     break;

@@ -49,12 +49,12 @@ ul {
     cursor: pointer;
 }
 
-.comparison {
+.compare {
     border: 1px solid #DBA27E;
     background: #DBA27E;
     color: #F7ECE5;
 }
-.comparison:before {
+.compare:before {
     content: '🔎';
     position: absolute;
     top: 0px;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort, asyncBubbleSort, asyncMergeSort }) => {
+const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort }) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -13,7 +13,7 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Quick Sort
             </button>
             <button type="button"
-                onClick={(e) => asyncMergeSort(array)}>
+                onClick={(e) => mergeSort(array)}>
                 Merge Sort
             </button>
             <button type="button"

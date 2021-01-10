@@ -1,9 +1,12 @@
 import React from 'react';
 import ListItem from './list_item';
 
-const List = ({ sorting, klass, id1, id2, ids }) => {
-    const list = sorting.map((number, idx) => {
-        return (<ListItem number={number} key={idx} klass={klass} id1={id1} id2={id2} ids={ids} />)
+// numbers received from toolbar container
+// receive klass and ids from list container
+const List = ({ numbers, klass, ids }) => {
+    const list = numbers.map((number, idx) => {
+        let actualKlass = ids.includes(number.id) ? klass : ""
+        return (<ListItem number={number.val} key={idx} actualKlass={actualKlass}/>)
     })
 
     return (
