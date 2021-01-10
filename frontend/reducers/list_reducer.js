@@ -3,9 +3,12 @@ import {
     CLEAR_NUMBERS,
     RECEIVE_SORTED_NUMBERS
 } from '../actions/list_actions';
+import myNum from '../class/myNumber';
+
+export const defaultArray = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48].map((n, i) => new myNum (i, n));
 
 const _listInitialState = {
-    unsorted: [],
+    unsorted: defaultArray,
     sorted: []
 }
 const listReducer = (state = _listInitialState, action) => {

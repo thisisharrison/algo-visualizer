@@ -9,7 +9,7 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Add Number
             </button>
             <button type="button"
-                onClick={quickSort}>
+                onClick={(e) => quickSort(array)}>
                 Quick Sort
             </button>
             <button type="button"
@@ -17,7 +17,6 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Merge Sort
             </button>
             <button type="button"
-                // onClick={bubbleSort}
                 onClick={(e) => bubbleSort(array)}>
                 Bubble Sort
             </button>

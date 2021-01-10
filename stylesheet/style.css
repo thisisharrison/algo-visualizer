@@ -33,7 +33,8 @@ ul {
     display: flex;
     flex-wrap: wrap;
     /* justify-content: center; */
-    align-items: center;
+    /* align-items: center; */
+    align-items: flex-end;
 }
 
 .item {
@@ -57,7 +58,7 @@ ul {
 .compare:before {
     content: '🔎';
     position: absolute;
-    top: 0px;
+    top: -20px;
 }
 
 .swap, .sorting {
@@ -69,7 +70,7 @@ ul {
 .swap:before {
     content: '🔄';
     position: absolute;
-    top: 0px;
+    top: -20px;
 }
 
 .sorted {
@@ -80,7 +81,7 @@ ul {
 .sorted:before {
     content: '✅';
     position: absolute;
-    top: 0px;
+    top: -20px;
 }
 
 .unsorted {
@@ -96,4 +97,17 @@ ul {
 
 .number {
     position: relative;
+}
+
+.bar {
+    height: 100px;
+    line-height: 30px;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #3b404a;
+    border-radius: 5px;
+    box-shadow: 5px 10px #F0F0F0;
+    text-align: center;
+    font-size: 28px;
+    cursor: pointer;
 }

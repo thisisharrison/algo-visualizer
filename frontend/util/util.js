@@ -55,18 +55,24 @@ const Util = {
     quickSort(array) {
         if (array.length < 2) return array;
         let pivot = array[0];
+        console.log('Pivot: ',pivot);
         let smaller = [];
         let larger = [];
         array.slice(1).forEach(num => {
             if (num <= pivot) {
                 smaller.push(num);
+                console.log('Smaller: ', smaller)
             } else {
                 larger.push(num);
+                console.log('Larger: ', larger)
             }
         })
         let sortSmaller = Util.quickSort(smaller);
         let sortLarger = Util.quickSort(larger);
+        console.log('Smaller Total', sortSmaller)
+        console.log('Larger Total', sortLarger)
         sortSmaller.push(pivot)
+        console.log('Smaller Total + Pivot', sortSmaller)
         return sortSmaller.concat(sortLarger);
     }
 }

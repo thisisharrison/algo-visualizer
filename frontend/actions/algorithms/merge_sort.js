@@ -37,9 +37,11 @@ export const merge = (a1, a2) => dispatch => {
         }
         merged.push(nextItem);
         if (merged.length > 1) {
-            dispatch(receiveAnimation(reorder(merged))); 
+            debugger
+            dispatch(receiveAnimation(reorder(merged)));
         }
     }
+    dispatch(receiveAnimation(reorder([...merged, ...a1])));
     dispatch(receiveAnimation(reorder([...merged, ...a1, ...a2])));
     dispatch(receiveAnimation(highlightSorted([...merged, ...a1, ...a2])))
     dispatch(receiveAnimation(highlightReset([...merged, ...a1, ...a2])))
