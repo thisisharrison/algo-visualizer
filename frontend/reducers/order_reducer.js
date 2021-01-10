@@ -2,7 +2,7 @@ import {
     RECEIVE_NUMBER,
     CLEAR_NUMBERS,
 } from '../actions/list_actions';
-import { RECEIVE_REORDER } from '../actions/order_actions';
+import { RECEIVE_NEW_ORDER } from '../actions/order_actions';
 
 
 const orderReducer = (state = [], action) => {
@@ -12,7 +12,7 @@ const orderReducer = (state = [], action) => {
             return [...state, action.number];
         case CLEAR_NUMBERS:
             return [];
-        case RECEIVE_REORDER:
+        case RECEIVE_NEW_ORDER:
             return action.numbers;
         default: 
             return state;

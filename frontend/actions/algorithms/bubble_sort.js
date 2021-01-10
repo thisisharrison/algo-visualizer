@@ -8,7 +8,7 @@ import { receiveAnimation } from '../animation_actions';
 import { receiveSortedNumbers } from '../list_actions';
 import { playAnimation } from '../animation_actions';
 
-export const actualBubbleSort = (array, toDispatch) => dispatch => {
+export const actualBubbleSort = array => dispatch => {
     let unsorted = true;
     let clone = Object.assign([], array);
     let length = array.length;
@@ -42,8 +42,3 @@ export const bubbleSort = array => (dispatch, getState) => {
     })
     
 }
-
-// animations = {
-//     compare: (numbers) => dispatch(highlightCompare(numbers))
-// }
-// animations['compare']([1,2,3])

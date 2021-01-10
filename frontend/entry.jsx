@@ -12,8 +12,9 @@ import { reorder } from './actions/order_actions';
 import myNum from './class/myNumber';
 import Util from './util/util';
 import { bubbleSort, actualBubbleSort } from './actions/algorithms/bubble_sort';
+import { mergeSort, actualMergeSort, merge } from './actions/algorithms/merge_sort';
 import { receiveAnimation } from './actions/animation_actions';
-import { receiveSortedNumbers } from './actions/list_actions';
+import { receiveNumber, receiveSortedNumbers } from './actions/list_actions';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.actualBubbleSort = actualBubbleSort;
     window.receiveAnimation = receiveAnimation;
     window.receiveSortedNumbers = receiveSortedNumbers;
+    window.mergeSort = mergeSort;
+    window.actualMergeSort = actualMergeSort;
+    window.merge = merge;
+    window.receiveNumber = receiveNumber;
     // TESTING
     // window.animationReducer = animationReducer;
     window.testingarray = [2, 7, 1].map((e, i) => new myNum(i, e));
