@@ -7,7 +7,7 @@ import Root from './components/root';
 
 // Refactor Later
 import { highlightCompare, highlightReset } from './actions/highlight_actions';
-import { reorder } from './actions/order_actions';
+import { reorder, insertBefore } from './actions/order_actions';
 // import animationReducer from './reducers/animation_reducer';
 import myNum from './class/myNumber';
 import Util from './util/util';
@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.actualMergeSort = actualMergeSort;
     window.merge = merge;
     window.receiveNumber = receiveNumber;
+    window.insertBefore = insertBefore;
     // TESTING
     // window.animationReducer = animationReducer;
     window.testingarray = [2, 7, 1].map((e, i) => new myNum(i, e));

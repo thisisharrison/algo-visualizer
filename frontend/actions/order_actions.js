@@ -26,3 +26,19 @@ export const reorder = subarray => (dispatch, getState) => {
     return new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveNewOrder(numbers)))
 }
+
+export const insertBefore = (num1, num2) => (dispatch, getState) => {
+    if (num1 === undefined || num2 === undefined) return;
+    let array = getState().visualizer.order.slice();
+    // Inserts num1 before num2
+    // Find index of num2
+    let idx = array.findIndex(el => el.id === num2.id);
+    // Split left and right. Right includes num2
+    // Filter left and right (no num1)
+    let left = array.slice(0, idx).filter(el => el.id !== num1.id);
+    let right = array.slice(idx).filter(el => el.id !== num1.id);
+    // [...left, num1, ...right]
+    let numbers = [...left, num1, ...right];
+    return new Promise(resolve => setTimeout(() => resolve(), SPEED))
+        .then(() => dispatch(receiveNewOrder(numbers)))
+}

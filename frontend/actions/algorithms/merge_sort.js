@@ -5,7 +5,7 @@ import {
     highlightReset,
     highlightSubarray
 } from '../highlight_actions';
-import { reorder } from '../order_actions';
+import { reorder, insertBefore } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
 import { receiveSortedNumbers } from '../list_actions';
 import { playAnimation } from '../animation_actions';
@@ -29,17 +29,18 @@ export const merge = (a1, a2) => dispatch => {
     let merged, nextItem;
     merged = [];
     while (a1.length > 0 && a2.length > 0) {
-        dispatch(receiveAnimation(highlightCompare([a1[0], a2[0]])));
         if (a1[0].val > a2[0].val) {
+            dispatch(receiveAnimation(highlightCompare([a1[0], a2[0]])));
+            dispatch(receiveAnimation(insertBefore(a2[0], a1[0])));
             nextItem = a2.shift();
         } else {
             nextItem = a1.shift();
         }
         merged.push(nextItem);
-        if (merged.length > 1) {
-            debugger
-            dispatch(receiveAnimation(reorder(merged)));
-        }
+        // if (merged.length > 1) {
+        //     debugger
+            // dispatch(receiveAnimation(reorder(merged)));
+        // }
     }
     dispatch(receiveAnimation(reorder([...merged, ...a1])));
     dispatch(receiveAnimation(reorder([...merged, ...a1, ...a2])));

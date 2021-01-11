@@ -54,7 +54,7 @@ export const highlightSorted = numbers => dispatch => (
 
 export const highlightReset = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
-        .then(() => dispatch(receiveSorted(numbers)))
+        .then(() => dispatch(receiveReset(numbers)))
 )
 
 export const highlightSubarray = numbers => dispatch => (
