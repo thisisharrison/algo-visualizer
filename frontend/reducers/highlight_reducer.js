@@ -3,7 +3,8 @@ import {
     RECEIVE_SWAP,
     RECEIVE_SORTED,
     RECEIVE_RESET,
-    RECEIVE_SUBARRAY
+    RECEIVE_SUBARRAY,
+    RECEIVE_PIVOT
 } from '../actions/highlight_actions';
 import { CLEAR_NUMBERS } from '../actions/list_actions';
 
@@ -20,6 +21,8 @@ const highlightReducer = (state = {}, action) => {
             return { reset: action.numbers }
         case RECEIVE_SUBARRAY:
             return { subarray: action.numbers }
+        case RECEIVE_PIVOT: // Could we have a highlight that persist until told to reset (eg. Pivot, Active, Inactive)
+            return Object.assign({}, state, { pivot: action.number })
         case CLEAR_NUMBERS: 
             return {}
         default:

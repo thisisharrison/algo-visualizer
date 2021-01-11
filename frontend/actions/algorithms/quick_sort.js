@@ -3,9 +3,10 @@ import {
     highlightSwap,
     highlightSorted,
     highlightReset,
-    highlightSubarray
+    highlightSubarray, 
+    highlightPivot
 } from '../highlight_actions';
-import { reorder } from '../order_actions';
+import { reorder, insertBefore } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
 import { receiveSortedNumbers } from '../list_actions';
 import { playAnimation } from '../animation_actions';
@@ -16,23 +17,26 @@ const actualQuickSort = array => dispatch => {
     dispatch(receiveAnimation(highlightSubarray([pivot])));
     let smaller = [];
     let larger = [];
-    array.slice(1).forEach(num => {
-        dispatch(receiveAnimation(highlightCompare([num, pivot])));
-        if (num <= pivot) {
+    array.slice(1).forEach((num, i) => {
+        dispatch(receiveAnimation(highlightCompare([pivot, num])));
+        if (num.val <= pivot.val) {
             smaller.push(num);
-            dispatch(receiveAnimation(reorder(smaller)));
+            dispatch(receiveAnimation(insertBefore(num, pivot)));
         } else {
             larger.push(num);
-            dispatch(receiveAnimation(reorder(larger)));
+            // 8, 10
+            dispatch(receiveAnimation(insertBefore(num, array.slice(1)[i + 1])));
         }
         dispatch(receiveAnimation(highlightSorted([num])))
     })
+    dispatch(receiveAnimation(highlightSubarray(smaller)));
     let sortSmaller = dispatch(actualQuickSort(smaller));
+    dispatch(receiveAnimation(highlightSubarray(larger)));
     let sortLarger = dispatch(actualQuickSort(larger));
     sortSmaller.push(pivot)
-    dispatch(receiveAnimation(reorder(sortSmaller)));
+    // dispatch(receiveAnimation(reorder(sortSmaller)));
     let sorted = sortSmaller.concat(sortLarger);
-    dispatch(receiveAnimation(reorder(sorted)));
+    // dispatch(receiveAnimation(reorder(sorted)));
     return sorted;
 }
 

@@ -31,19 +31,19 @@ export const merge = (a1, a2) => dispatch => {
     while (a1.length > 0 && a2.length > 0) {
         if (a1[0].val > a2[0].val) {
             dispatch(receiveAnimation(highlightCompare([a1[0], a2[0]])));
+            dispatch(receiveAnimation(highlightSwap([a2[0], a1[0]])));
             dispatch(receiveAnimation(insertBefore(a2[0], a1[0])));
             nextItem = a2.shift();
         } else {
+            dispatch(receiveAnimation(highlightSorted([a1[0]])));
             nextItem = a1.shift();
         }
         merged.push(nextItem);
-        // if (merged.length > 1) {
-        //     debugger
-            // dispatch(receiveAnimation(reorder(merged)));
-        // }
     }
     dispatch(receiveAnimation(reorder([...merged, ...a1])));
+    dispatch(receiveAnimation(highlightSorted([...a1])));
     dispatch(receiveAnimation(reorder([...merged, ...a1, ...a2])));
+    dispatch(receiveAnimation(highlightSorted([...a2])));
     dispatch(receiveAnimation(highlightSorted([...merged, ...a1, ...a2])))
     dispatch(receiveAnimation(highlightReset([...merged, ...a1, ...a2])))
     return [...merged, ...a1, ...a2];

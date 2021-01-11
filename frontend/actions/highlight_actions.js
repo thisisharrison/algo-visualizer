@@ -3,6 +3,7 @@ export const RECEIVE_SWAP = 'RECEIVE_SWAP';
 export const RECEIVE_SORTED = 'RECEIVE_SORTED';
 export const RECEIVE_RESET = 'RECEIVE_RESET';
 export const RECEIVE_SUBARRAY = 'RECEIVE_SUBARRAY';
+export const RECEIVE_PIVOT = 'RECEIVE_PIVOT';
 import { SPEED } from '../entry';
 
 export const receiveCompare = (numbers) => (
@@ -35,8 +36,14 @@ export const receiveSubarray = (numbers) => (
         numbers
     }
 )
-// dispatch(highlightCompare([1,2])).then(() => dispatch(highlightCompare([1,2])))
-// IT WORKED!
+// Could we have a highlight that persist until told to reset
+export const receivePivot = (number) => (
+    {
+        type: RECEIVE_PIVOT,
+        number
+    }
+)
+
 export const highlightCompare = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
     .then(() => dispatch(receiveCompare(numbers)))
@@ -60,4 +67,8 @@ export const highlightReset = numbers => dispatch => (
 export const highlightSubarray = numbers => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveSubarray(numbers)))
+)
+export const highlightPivot = number => dispatch => (
+    new Promise(resolve => setTimeout(() => resolve(), SPEED))
+        .then(() => dispatch(receivePivot(number)))
 )
