@@ -78,7 +78,7 @@ const Util = {
     quickSort2(array, start = 0, finish = array.length - 1) {
         if (start >= finish) return;
         // partition will make swaps
-        let boundary = Util.partition(array, start, finish);
+        let boundary = Util.partition2(array, start, finish);
         // quick sort left
         Util.quickSort2(array, start, boundary - 1);
         // quick sort right
@@ -107,6 +107,19 @@ const Util = {
         array[start] = array[lh];
         array[lh] = pivot;
         return lh;
+    },
+    partition2(array, start, finish) {
+        let pivot = array[finish];
+        let i = start - 1;
+        for (let j = start; j < finish; j++) {
+            if (array[j] < pivot) {
+                i += 1;
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        // Move pivot to i + 1
+        [array[i + 1], array[finish]] = [array[finish], array[i + 1]];
+        return i + 1;
     }
 }
 
