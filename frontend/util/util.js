@@ -74,6 +74,39 @@ const Util = {
         sortSmaller.push(pivot)
         console.log('Smaller Total + Pivot', sortSmaller)
         return sortSmaller.concat(sortLarger);
+    }, 
+    quickSort2(array, start = 0, finish = array.length - 1) {
+        if (start >= finish) return;
+        // partition will make swaps
+        let boundary = Util.partition(array, start, finish);
+        // quick sort left
+        Util.quickSort2(array, start, boundary - 1);
+        // quick sort right
+        Util.quickSort2(array, boundary + 1, finish);
+        return array;
+    },
+    partition(array, start, finish) {
+        let pivot = array[start];
+        let lh = start + 1;
+        let rh = finish;
+        while (true) {
+            // Finds a value that should be to the left of the pivot
+            // Once smaller than pivot it stops
+            while (lh < rh && array[rh] >= pivot) rh --;
+            // Finds a value that should be to the right of pivot
+            // Once greater than pivot it stops
+            while (lh < rh && array[lh] < pivot) lh ++;
+            // If pointers meet, break out of the loop
+            if (lh === rh) break;
+            // Swap
+            [array[lh], array[rh]] = [array[rh], array[lh]]
+        }
+        // Works but don't get it
+        // Return index of the pivot
+        if (array[lh] >= pivot) return start;
+        array[start] = array[lh];
+        array[lh] = pivot;
+        return lh;
     }
 }
 
