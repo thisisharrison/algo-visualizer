@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // TESTING
     window.store = store;
     window.getState = store.getState;
-    window.Util = Util;
 });
 
 export const SPEED = 100;
