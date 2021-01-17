@@ -1,11 +1,13 @@
 import { connect } from 'react-redux';
-import { highlightIds, highlightType } from '../../reducers/selectors';
-import { getNumbers, getArray } from '../../reducers/selectors';
+import { getArray, highlightIds, highlightType, activeIds, inactiveIds, pivotId } from '../../reducers/selectors';
 import List from './list';
 
-const mapStateToProps = (state, ownProps) => ({
-    numbers: getArray(state),
-    klass: highlightType(state),
-    ids: highlightIds(state)
+const mapStateToProps = ({visualizer}, ownProps) => ({
+    numbers: getArray(visualizer),
+    klass: highlightType(visualizer),
+    ids: highlightIds(visualizer), 
+    activeIds: activeIds(visualizer.highlight),
+    inactiveIds: inactiveIds(visualizer.highlight),
+    pivotId: pivotId(visualizer.highlight)
 });
 export default connect(mapStateToProps, null)(List);

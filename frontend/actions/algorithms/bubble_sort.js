@@ -1,9 +1,5 @@
 import {
-    highlightCompare,
-    highlightSwap,
-    highlightSorted,
-    highlightReset, 
-    updateHiglight
+    updateHighlight
 } from '../highlight_actions';
 import { reorder } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
@@ -17,20 +13,27 @@ export const actualBubbleSort = array => dispatch => {
     while (unsorted) {
         unsorted = false;
         for (let i = 0; i < length - 1; i++) {
-            dispatch(receiveAnimation(highlightCompare([clone[i], clone[i + 1]])));
+            dispatch(receiveAnimation(
+                updateHighlight('compare', [clone[i], clone[i + 1]])
+                ));
             switch (clone[i].val <= clone[i + 1].val) {
                 case true:
-                    dispatch(receiveAnimation(highlightSorted([clone[i], clone[i + 1]])));
+                    dispatch(receiveAnimation(
+                        updateHighlight('sorted', [clone[i], clone[i + 1]])
+                        ));
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
-                    dispatch(receiveAnimation(highlightSwap([clone[i], clone[i + 1]])));
+                    dispatch(receiveAnimation(
+                        updateHighlight('swap', [clone[i], clone[i + 1]])
+                        ));
                     dispatch(receiveAnimation(reorder([clone[i], clone[i + 1]])));
-                    dispatch(receiveAnimation(highlightSorted([clone[i], clone[i + 1]])));
+                    dispatch(receiveAnimation(
+                        updateHighlight('sorted', [clone[i], clone[i + 1]])
+                        ));
                     unsorted = true;
                     break;
             }
-            dispatch(receiveAnimation(highlightReset([clone[i], clone[i + 1]])));
         }
     }
     return clone;
@@ -41,7 +44,6 @@ export const bubbleSort = array => (dispatch, getState) => {
     .then((numbers) => {
         dispatch(receiveSortedNumbers(numbers));
         let toDispatch = getState().visualizer.animation;
-        dispatch(playAnimation(toDispatch)); // IT WORKED!!
+        dispatch(playAnimation(toDispatch));
     })
-    
 }

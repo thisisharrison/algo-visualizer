@@ -84,21 +84,22 @@ ul {
     top: -20px;
 }
 
-.unsorted {
-    border: 1px solid #7B869B;
-    color: #7B869B;
+.inactive {
+    border: 1px solid #3B404A;
+    background-color: #3B404A;
+    color: #FFFFFF;
 }
 
-.subarray {
-    border: 1px solid turquoise;
-    background-color: turquoise;
-    color: white;
+.active {
+    border: 1px solid #85BCCE;
+    background-color: #85BCCE;
+    color: #FFFFFF;
 }
 
 .pivot {
-    border: 1px solid greenyellow;
-    background-color: greenyellow;
-    color: black;
+    border: 1px solid #9469C6;
+    background-color: #9469C6;
+    color: #FFFFFF;
 }
 
 .number {

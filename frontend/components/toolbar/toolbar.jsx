@@ -9,11 +9,13 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Add Number
             </button>
             <button type="button"
-                onClick={(e) => quickSort(array)}>
+                onClick={(e) => quickSort(array)}
+                >
                 Quick Sort
             </button>
             <button type="button"
-                onClick={(e) => mergeSort(array)}>
+                onClick={(e) => mergeSort(array)}
+                >
                 Merge Sort
             </button>
             <button type="button"

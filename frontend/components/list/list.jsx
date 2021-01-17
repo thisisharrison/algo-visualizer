@@ -1,11 +1,12 @@
 import React from 'react';
 import ListItem from './list_item';
 
-// numbers received from toolbar container
-// receive klass and ids from list container
-const List = ({ numbers, klass, ids }) => {
+const List = ({ numbers, klass, ids, activeIds, inactiveIds, pivotId }) => {
     const list = numbers.map((number, idx) => {
-        let actualKlass = ids.includes(number.id) ? klass : ""
+        let actualKlass = activeIds.includes(number.id) ? 'active' : '';
+        actualKlass = inactiveIds.includes(number.id) ? 'inactive' : actualKlass;
+        actualKlass = ids.includes(number.id) ? klass : actualKlass;
+        actualKlass = pivotId.includes(number.id) ? 'pivot' : actualKlass;
         return (<ListItem number={number.val} key={idx} actualKlass={actualKlass}/>)
     })
 

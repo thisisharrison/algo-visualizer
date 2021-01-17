@@ -42,3 +42,30 @@ export const insertBefore = (num1, num2) => (dispatch, getState) => {
     return new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveNewOrder(numbers)))
 }
+
+// [1, 2, 4, 5, 6, 7, 8, 9]
+// window.receiveSubarrayMerge = (subarray, array) => {
+//     let indexes = [];
+//     for (let i = 0; i < subarray.length; i++) {
+//         let k = array.findIndex(el => el == subarray[i]);
+//         indexes.push(k);
+//     }
+//     // Smallest index 
+//     let minIndex = indexes.sort((a, b) => a - b)[0];
+//     return [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
+// }
+// Find subarray smallest index 
+// Delete subarray numbers from array
+// Insert subarray from smallest index
+// Concat the rest 
+// window.insertMerge = (subarray, array) => {
+//     let indexes = [];
+//     for (let i = 0; i < subarray.length; i++) {
+//         let k = array.findIndex(el => el == subarray[i]);
+//         indexes.push(k);
+//     }
+//     // Smallest index 
+//     let minIndex = indexes.sort((a, b) => a - b)[0];
+//     let without = array.filter(n => !subarray.includes(n));
+//     return [...without.slice(0, minIndex), ...subarray, ...without.slice(minIndex)]
+// }

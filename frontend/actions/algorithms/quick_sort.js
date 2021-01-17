@@ -1,10 +1,7 @@
 import {
-    highlightCompare,
-    highlightSwap,
-    highlightSorted,
-    highlightReset,
-    highlightSubarray, 
-    highlightPivot
+    updateHighlight,
+    updatePersist,
+    clearPersist
 } from '../highlight_actions';
 import { reorder, insertBefore } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
@@ -14,24 +11,40 @@ import { playAnimation } from '../animation_actions';
 const actualQuickSort = array => dispatch => {
     if (array.length < 2) return array;
     let pivot = array[0];
-    dispatch(receiveAnimation(highlightSubarray([pivot])));
+    dispatch(receiveAnimation(
+        updatePersist('pivot', [pivot])
+    ));
     let smaller = [];
     let larger = [];
     array.slice(1).forEach((num, i) => {
-        dispatch(receiveAnimation(highlightCompare([pivot, num])));
+        dispatch(receiveAnimation(
+            updateHighlight('compare', [pivot, num])
+        ));
         if (num.val <= pivot.val) {
             smaller.push(num);
-            dispatch(receiveAnimation(insertBefore(num, pivot)));
+            dispatch(receiveAnimation(
+                updateHighlight('swap', [num])
+            ));
+            dispatch(receiveAnimation(
+                insertBefore(num, pivot)
+            ));
+            dispatch(receiveAnimation(
+                updateHighlight('sorted', [num])
+            ));
         } else {
             larger.push(num);
-            // 8, 10
-            dispatch(receiveAnimation(insertBefore(num, array.slice(1)[i + 1])));
+            dispatch(receiveAnimation(
+                insertBefore(num, array.slice(1)[i + 1])
+            ));
         }
-        dispatch(receiveAnimation(highlightSorted([num])))
+        dispatch(receiveAnimation(
+            updateHighlight('sorted', [num])
+        ));
     })
-    dispatch(receiveAnimation(highlightSubarray(smaller)));
+    dispatch(receiveAnimation(
+        clearPersist('pivot', [pivot])
+    ));
     let sortSmaller = dispatch(actualQuickSort(smaller));
-    dispatch(receiveAnimation(highlightSubarray(larger)));
     let sortLarger = dispatch(actualQuickSort(larger));
     sortSmaller.push(pivot)
     // dispatch(receiveAnimation(reorder(sortSmaller)));

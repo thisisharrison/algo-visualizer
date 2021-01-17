@@ -10,7 +10,3 @@ const visualizerReducer = combineReducers({
 })
 
 export default visualizerReducer;
-
-// Order of animation
-// Compare > Sorted > Reset
-// Compare > Swap / Sorting > Sorted > Reset

@@ -7,9 +7,9 @@ import { getArray } from '../../reducers/selectors';
 import Util from '../../util/util';
 import Toolbar from './toolbar';
 
-const mapStateToProps = state => (
+const mapStateToProps = ({visualizer}) => (
     {
-        array: getArray(state)
+        array: getArray(visualizer)
     }
 )
 
