@@ -25,24 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TESTED
     window.store = store;
     window.dispatch = store.dispatch;
-    window.highlightCompare = highlightCompare; 
-    window.highlightReset = highlightReset;
-    window.reorder = reorder;
-    window.bubbleSort = bubbleSort;
-    window.actualBubbleSort = actualBubbleSort;
-    window.receiveAnimation = receiveAnimation;
-    window.receiveSortedNumbers = receiveSortedNumbers;
-    window.mergeSort = mergeSort;
-    window.actualMergeSort = actualMergeSort;
-    window.merge = merge;
-    window.receiveNumber = receiveNumber;
-    window.insertBefore = insertBefore;
-    // TESTING
-    // window.animationReducer = animationReducer;
-    window.testingarray = [2, 7, 1].map((e, i) => new myNum(i, e));
-    window.testingarray1 = [2, 7, 1];
-
-    
+    window.reorder = reorder;    
     window.Util = Util;
 });
 
@@ -118,19 +101,18 @@ export const SPEED = 300;
 //     dispatch(receiveAnimation([...merged, ...a1, ...a2], 'SORTED'))
 //     return [...merged, ...a1, ...a2];
 // }
-window.q = [1, 2, 3, 4]
-window.w = [2, 4, 5, 6, 1, 3, 8, 9]
+
 // [1, 2, 4, 5, 6, 7, 8, 9]
-window.receiveSubarrayMerge = (subarray, array) => {
-    let indexes = [];
-    for (let i = 0; i < subarray.length; i++) {
-        let k = array.findIndex(el => el == subarray[i]);
-        indexes.push(k);
-    }
-    // Smallest index 
-    let minIndex = indexes.sort((a, b) => a - b)[0];
-    return [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
-}
+// window.receiveSubarrayMerge = (subarray, array) => {
+//     let indexes = [];
+//     for (let i = 0; i < subarray.length; i++) {
+//         let k = array.findIndex(el => el == subarray[i]);
+//         indexes.push(k);
+//     }
+//     // Smallest index 
+//     let minIndex = indexes.sort((a, b) => a - b)[0];
+//     return [...array.slice(0, minIndex), ...subarray, ...array.slice(indexes[indexes.length - 1] + 1)]
+// }
 // Find subarray smallest index 
 // Delete subarray numbers from array
 // Insert subarray from smallest index

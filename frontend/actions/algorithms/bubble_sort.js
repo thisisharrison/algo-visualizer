@@ -2,7 +2,8 @@ import {
     highlightCompare,
     highlightSwap,
     highlightSorted,
-    highlightReset
+    highlightReset, 
+    updateHiglight
 } from '../highlight_actions';
 import { reorder } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';

@@ -6,6 +6,23 @@ export const RECEIVE_SUBARRAY = 'RECEIVE_SUBARRAY';
 export const RECEIVE_PIVOT = 'RECEIVE_PIVOT';
 import { SPEED } from '../entry';
 
+
+// Refactor compare, swap, reset etc.
+export const changeHighlight = (highlight, value) => ({
+    type: UPDATE_HIGHLIGHT,
+    highlight,
+    value
+})
+
+export const updateHiglight = (highlight, value) => dispatch => (
+    new Promise(resolve => setTimeout(() =>
+        resolve(
+            dispatch(changeHighlight(highlight, value))
+        ), SPEED
+    ))
+)
+
+
 export const receiveCompare = (numbers) => (
     {
         type: RECEIVE_COMPARE,
@@ -72,3 +89,19 @@ export const highlightPivot = number => dispatch => (
     new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receivePivot(number)))
 )
+
+// import { fetchBenches } from './bench_actions'
+
+// export const UPDATE_FILTER = 'UPDATE_FILTER';
+
+// export const changeFilter = (filter, value) => ({
+//     type: UPDATE_FILTER,
+//     filter,
+//     value
+// });
+
+// export const updateFilter = (filter, value) => (dispatch, getState) => {
+//     dispatch(changeFilter(filter, value));
+//     return fetchBenches(getState().ui.filters)(dispatch);
+// };
+
