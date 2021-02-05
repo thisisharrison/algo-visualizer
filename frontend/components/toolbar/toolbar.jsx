@@ -1,6 +1,17 @@
 import React from 'react';
 
-const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bubbleSort }) => {
+const Toolbar = ({ 
+    array, 
+    receiveNumber,
+    clearNumbers,
+    resetNumbers,
+    quickSort,
+    mergeSort,
+    bubbleSort,
+    quickSortInPlace,
+    insertionSort,
+    selectionSort
+}) => {
     return (
         <div>
             <h1>Inside Toolbar</h1>
@@ -11,7 +22,11 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
             <button type="button"
                 onClick={(e) => quickSort(array)}
                 >
-                Quick Sort
+                Quicksort naive
+            </button>
+            <button type="button"
+                >
+                Quicksort in-place
             </button>
             <button type="button"
                 onClick={(e) => mergeSort(array)}
@@ -19,8 +34,22 @@ const Toolbar = ({ array, receiveNumber, clearNumbers, quickSort, mergeSort, bub
                 Merge Sort
             </button>
             <button type="button"
+                onClick={(e) => selectionSort(array)}
+                >
+                Selection
+                </button>
+            <button type="button"
+                >
+                Insertion
+                </button>
+            <button type="button"
                 onClick={(e) => bubbleSort(array)}>
                 Bubble Sort
+            </button>
+            <button type="button"
+                onClick={resetNumbers}
+                >
+                Reset
             </button>
             <button type="button"
                 onClick={clearNumbers}>

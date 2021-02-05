@@ -1,7 +1,8 @@
 import {
     RECEIVE_NUMBER,
     CLEAR_NUMBERS,
-    RECEIVE_SORTED_NUMBERS
+    RECEIVE_SORTED_NUMBERS,
+    RESET_NUMBERS
 } from '../actions/list_actions';
 import myNum from '../class/myNumber';
 
@@ -21,6 +22,8 @@ const listReducer = (state = _listInitialState, action) => {
             return _listInitialState;
         case RECEIVE_SORTED_NUMBERS:
             return Object.assign({}, state, { sorted: action.numbers })
+        case RESET_NUMBERS:
+            return _listInitialState;
         default:
             return state;
     }

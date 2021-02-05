@@ -15,7 +15,12 @@ ul, li, div {
 }
 
 body {
-    background-color: #f8f8f8
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:1rem;
+    font-weight:400;
+    line-height:1.5;
+    color:#212529;
+    background-color:#fff;
 }
 
 ul {
@@ -26,7 +31,6 @@ ul {
 #content {
     margin: 50px auto;
     width: 80%;
-    font-family: sofia-pro, sans-serif;
 }
 
 .list {
@@ -68,8 +72,8 @@ ul {
 }
 
 .bar.swap, .bar.sorting {
-    border: 1px solid #5271B8;
-    background-color: #5271B8;
+    border: 1px solid #469ae0;
+    background-color: #469ae0;
     /* color: #FFFFFF; */
     transition: background-color 0.05s ease-in;
 }
@@ -85,8 +89,8 @@ ul {
 }
 
 .bar.sorted {
-    border: 1px solid #7EA398;
-    background-color: #7EA398;
+    border: 1px solid #32b796;
+    background-color: #32b796;
     /* color: #EDFFFF;  */
     transition: background-color 0.05s ease-in;
 }
@@ -153,4 +157,11 @@ ul {
 .compare:before, .swap:before, .sorted:before {
     opacity: 1;
     transition: opacity 0.05s ease-in-out;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }

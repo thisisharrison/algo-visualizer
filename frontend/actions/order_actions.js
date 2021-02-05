@@ -43,6 +43,13 @@ export const insertBefore = (num1, num2) => (dispatch, getState) => {
         .then(() => dispatch(receiveNewOrder(numbers)))
 }
 
+export const swap = (idx1, idx2) => (dispatch, getState) => {
+    let array = getState().visualizer.order.slice();
+    [array[idx1], array[idx2]] = [array[idx2], array[idx1]]
+    new Promise(resolve => setTimeout(() => resolve(), SPEED))
+    .then(() => dispatch(receiveNewOrder(array)))
+}
+
 // [1, 2, 4, 5, 6, 7, 8, 9]
 // window.receiveSubarrayMerge = (subarray, array) => {
 //     let indexes = [];
