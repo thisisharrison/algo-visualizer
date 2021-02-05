@@ -34,20 +34,19 @@ const actualSelection = array => dispatch => {
             }
             dispatch(receiveAnimation(
                 updateHighlight('reset', [clone[min], clone[k]])
+            ))            
+        }
+        if (min !== i) {
+            [clone[i], clone[min]] = [clone[min], clone[i]]
+            dispatch(receiveAnimation(
+                updateHighlight('swap', [clone[i], clone[min]])
             ))
-            // THIS IS NOT WORKING
-            if (min !== i) {
-                [clone[i], clone[min]] = [clone[min], clone[i]]
-                dispatch(receiveAnimation(
-                    updateHighlight('swap', [clone[i], clone[min]])
-                ))
-                dispatch(receiveAnimation(
-                    swap(i, min)
-                ))
-                dispatch(receiveAnimation(
-                    updateHighlight('sorted', [clone[i], clone[min]])
-                ))
-            }
+            dispatch(receiveAnimation(
+                swap(i, min)
+            ))
+            dispatch(receiveAnimation(
+                updateHighlight('sorted', [clone[i], clone[min]])
+            ))
         }
         dispatch(receiveAnimation(
             clearPersist('pivot', [clone[min]])
