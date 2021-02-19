@@ -39,9 +39,10 @@ const Toolbar = ({
                 Selection
                 </button>
             <button type="button"
+                onClick={(e) => insertionSort(array)}
                 >
                 Insertion
-                </button>
+            </button>
             <button type="button"
                 onClick={(e) => bubbleSort(array)}>
                 Bubble Sort
