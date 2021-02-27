@@ -10,4 +10,4 @@
 
 ### To-do
 - [ ] Searching Algorithms
-- [ ] Coffee Themed
+- [ ] Cafe Themed
