@@ -14,7 +14,7 @@ const Toolbar = ({
 }) => {
     return (
         <div>
-            <h1>Inside Toolbar</h1>
+            {/* <h1>Inside Toolbar</h1> */}
             <button type="button"
                 onClick={receiveNumber}>
                 Add Number

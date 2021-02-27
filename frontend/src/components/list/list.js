@@ -12,7 +12,7 @@ const List = ({ numbers, klass, ids, activeIds, inactiveIds, pivotId }) => {
 
     return (
         <div>
-            <h1>Inside List</h1>
+            {/* <h1>Inside List</h1> */}
             <ul className="list">
                 {list}
             </ul>
