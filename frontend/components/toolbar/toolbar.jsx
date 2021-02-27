@@ -25,6 +25,7 @@ const Toolbar = ({
                 Quicksort naive
             </button>
             <button type="button"
+                onClick={(e) => quickSortInPlace(array)}
                 >
                 Quicksort in-place
             </button>

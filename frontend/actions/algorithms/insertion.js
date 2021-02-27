@@ -19,7 +19,7 @@ const actualInsertion = array => dispatch => {
         while (j >= 1 && clone[j - 1].val > pivot.val) {
             dispatch(receiveAnimation(
                 clearPersist('pivot', [pivot])
-            ))
+            ));
             dispatch(receiveAnimation(
                 updateHighlight('compare', [clone[j - 1], pivot])
             ));
@@ -33,10 +33,16 @@ const actualInsertion = array => dispatch => {
             dispatch(receiveAnimation(
                 swap(j - 1, j)
             ));
+            dispatch(receiveAnimation(
+                clearPersist('pivot', [pivot])
+            ));
             j--;
         }
         clone[j] = pivot;
     }
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', clone)
+    ));
     return clone;
 }
 

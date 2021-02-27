@@ -1,6 +1,8 @@
 import {
     RECEIVE_NUMBER,
     CLEAR_NUMBERS,
+    RECEIVE_SORTED_NUMBERS,
+    RESET_NUMBERS
 } from '../actions/list_actions';
 import { RECEIVE_NEW_ORDER } from '../actions/order_actions';
 import { defaultArray } from './list_reducer';
@@ -14,6 +16,8 @@ const orderReducer = (state = defaultArray, action) => {
             return [];
         case RECEIVE_NEW_ORDER:
             return action.numbers;
+        case RESET_NUMBERS:
+            return defaultArray;
         default: 
             return state;
     }

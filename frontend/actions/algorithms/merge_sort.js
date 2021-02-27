@@ -16,19 +16,11 @@ export const actualMergeSort = array => dispatch => {
     midIdx = Math.floor(length / 2);
     left = array.slice(0, midIdx);
     right = array.slice(midIdx);
-
-    dispatch(receiveAnimation(clearPersist('active', [...left, ...right])))
-    dispatch(receiveAnimation(clearPersist('inactive', [...left, ...right])))
-    
-    dispatch(receiveAnimation(updatePersist('active', left)));
-    dispatch(receiveAnimation(updatePersist('inactive', right)));
     
     sortLeft = dispatch(actualMergeSort(left));
 
-    dispatch(receiveAnimation(updatePersist('active', right)));
-    dispatch(receiveAnimation(updatePersist('inactive', left)));
-
     sortRight = dispatch(actualMergeSort(right));
+
     return dispatch(merge(sortLeft, sortRight))
 }
 
@@ -53,12 +45,22 @@ export const merge = (a1, a2) => dispatch => {
         }
         merged.push(nextItem);
     }
-    dispatch(receiveAnimation(reorder([...merged, ...a1])));
-    dispatch(receiveAnimation(updateHighlight('sorted', [...a1])));
-    dispatch(receiveAnimation(reorder([...merged, ...a1, ...a2])));
-    dispatch(receiveAnimation(updateHighlight('sorted', [...a2])));
-    dispatch(receiveAnimation(updateHighlight('sorted', [...merged, ...a1, ...a2])))
-    // dispatch(receiveAnimation(highlightReset([...merged, ...a1, ...a2])))
+    dispatch(receiveAnimation(
+        reorder([...merged, ...a1])
+    ));
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', [...a1])
+    ));
+    dispatch(receiveAnimation(
+        reorder([...merged, ...a1, ...a2])
+    ));
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', [...a2])
+    ));
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', [...merged, ...a1, ...a2])
+    ))
+
     return [...merged, ...a1, ...a2];
 }
 
@@ -69,5 +71,4 @@ export const mergeSort = array => (dispatch, getState) => {
             let toDispatch = getState().visualizer.animation;
             dispatch(playAnimation(toDispatch));
         }))
-    
 }

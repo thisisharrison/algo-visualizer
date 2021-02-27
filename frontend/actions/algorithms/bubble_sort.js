@@ -15,27 +15,32 @@ export const actualBubbleSort = array => dispatch => {
         for (let i = 0; i < length - 1; i++) {
             dispatch(receiveAnimation(
                 updateHighlight('compare', [clone[i], clone[i + 1]])
-                ));
+            ));
             switch (clone[i].val <= clone[i + 1].val) {
                 case true:
                     dispatch(receiveAnimation(
                         updateHighlight('sorted', [clone[i], clone[i + 1]])
-                        ));
+                    ));
                     break;
                 case false:
                     [clone[i], clone[i + 1]] = [clone[i + 1], clone[i]];
                     dispatch(receiveAnimation(
                         updateHighlight('swap', [clone[i], clone[i + 1]])
-                        ));
-                    dispatch(receiveAnimation(reorder([clone[i], clone[i + 1]])));
+                    ));
+                    dispatch(receiveAnimation(
+                        reorder([clone[i], clone[i + 1]])
+                    ));
                     dispatch(receiveAnimation(
                         updateHighlight('sorted', [clone[i], clone[i + 1]])
-                        ));
+                    ));
                     unsorted = true;
                     break;
             }
         }
     }
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', clone)
+    ));
     return clone;
 }
 

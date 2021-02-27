@@ -3,7 +3,7 @@ import {
     updatePersist,
     clearPersist
 } from '../highlight_actions';
-import { reorder, insertBefore, swap } from '../order_actions';
+import { swap } from '../order_actions';
 import { receiveAnimation } from '../animation_actions';
 import { receiveSortedNumbers } from '../list_actions';
 import { playAnimation } from '../animation_actions';
@@ -52,6 +52,9 @@ const actualSelection = array => dispatch => {
             clearPersist('pivot', [clone[min]])
         ))
     }
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', clone)
+    ))
     return clone;
 }
 

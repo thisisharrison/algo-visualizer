@@ -1,4 +1,4 @@
-import { CLEAR_NUMBERS } from '../actions/list_actions';
+import { CLEAR_NUMBERS, RESET_NUMBERS } from '../actions/list_actions';
 import { UPDATE_HIGHLIGHT, UPDATE_PERSIST, CLEAR_PERSIST } from '../actions/highlight_actions';
 
 const initialState = {
@@ -33,6 +33,8 @@ const highlightReducer = (state = initialState, action) => {
                 { [action.highlight] : [] }
                 );
         case CLEAR_NUMBERS:
+            return initialState;
+        case RESET_NUMBERS: 
             return initialState;
         default:
             return state;

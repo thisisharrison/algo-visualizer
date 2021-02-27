@@ -47,9 +47,11 @@ const actualQuickSort = array => dispatch => {
     let sortSmaller = dispatch(actualQuickSort(smaller));
     let sortLarger = dispatch(actualQuickSort(larger));
     sortSmaller.push(pivot)
-    // dispatch(receiveAnimation(reorder(sortSmaller)));
     let sorted = sortSmaller.concat(sortLarger);
-    // dispatch(receiveAnimation(reorder(sorted)));
+
+    dispatch(receiveAnimation(
+        updateHighlight('sorted', array)
+    ));
     return sorted;
 }
 

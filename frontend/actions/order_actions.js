@@ -1,13 +1,13 @@
 export const RECEIVE_NEW_ORDER = 'RECEIVE_NEW_ORDER';
 import { SPEED } from '../entry';
 
-export const receiveNewOrder = numbers => (
-    {
-        type: RECEIVE_NEW_ORDER,
-        numbers
-    }
-)
+export const receiveNewOrder = numbers => ({
+    type: RECEIVE_NEW_ORDER,
+    numbers
+})
 
+// subarray => [2, 3] array => [1, 3, 2, 4, 5]
+// reorders by remove [3, 2] in array, and replacing with subarray
 export const reorder = subarray => (dispatch, getState) => {
     let numbers;
     let array = getState().visualizer.order.slice();
@@ -17,20 +17,22 @@ export const reorder = subarray => (dispatch, getState) => {
         indexes.push(k);
     }
     let minIndex = indexes.sort((a, b) => a - b)[0];
+    // Remove
     let without = array.filter(num => !subarray.map(s => s.id).includes(num.id));
     // Replace 
     numbers = [...without.slice(0, minIndex), ...subarray, ...without.slice(minIndex)]
     
+    // For debugging
     if (numbers.length !== array.length)
     { debugger }
     return new Promise(resolve => setTimeout(() => resolve(), SPEED))
         .then(() => dispatch(receiveNewOrder(numbers)))
 }
 
+// Inserts num1 before num2
 export const insertBefore = (num1, num2) => (dispatch, getState) => {
     if (num1 === undefined || num2 === undefined) return;
     let array = getState().visualizer.order.slice();
-    // Inserts num1 before num2
     // Find index of num2
     let idx = array.findIndex(el => el.id === num2.id);
     // Split left and right. Right includes num2

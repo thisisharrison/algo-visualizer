@@ -91,19 +91,18 @@ const Util = {
         let rh = finish;
         while (true) {
             // Finds a value that should be to the left of the pivot
-            // Once smaller than pivot it stops
             while (lh < rh && array[rh] >= pivot) rh --;
             // Finds a value that should be to the right of pivot
-            // Once greater than pivot it stops
             while (lh < rh && array[lh] < pivot) lh ++;
             // If pointers meet, break out of the loop
             if (lh === rh) break;
             // Swap
             [array[lh], array[rh]] = [array[rh], array[lh]]
         }
-        // Works but don't get it
-        // Return index of the pivot
+        // Left hand number still greater than pivot
+        // pivot does not move
         if (array[lh] >= pivot) return start;
+        // Otherwise swap left hand number with pivot
         array[start] = array[lh];
         array[lh] = pivot;
         return lh;
@@ -124,28 +123,3 @@ const Util = {
 }
 
 export default Util;
-
-/*
-animate merged subarray
-    receive merge sorting 
-        [0, 1, 2, 3]
-    in sorting
-        [0, 1, 2, 3, 4, 5, 6, 7]
-        delete by index 
-        saves the index
-        ...original array.slice(0, index), ...merge sorting, ...original array.slice(index + merge sorting length)
-  
-        
-
-
-
-
-
-        
-// animate sorting one side // TO DO
-// We should tear down the subarray from full array
-// render sorted subarray and unsorted other half
-// render one number at a time
-// need a new action creator
-
-*/

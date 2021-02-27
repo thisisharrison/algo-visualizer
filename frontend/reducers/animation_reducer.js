@@ -1,5 +1,5 @@
 import { RECEIVE_ANIMATION } from '../actions/animation_actions';
-import { CLEAR_NUMBERS } from '../actions/list_actions'; 
+import { CLEAR_NUMBERS, RESET_NUMBERS } from '../actions/list_actions'; 
 
 const animationReducer = (state = [], action) => {
     Object.freeze(state);
@@ -7,6 +7,8 @@ const animationReducer = (state = [], action) => {
         case RECEIVE_ANIMATION:
             return [...state, action.animation]
         case CLEAR_NUMBERS: 
+            return [];
+        case RESET_NUMBERS: 
             return [];
         default: 
             return state;
