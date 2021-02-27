@@ -24,11 +24,11 @@ const Toolbar = ({
                 >
                 Quicksort naive
             </button>
-            <button type="button"
+            {/* <button type="button"
                 onClick={(e) => quickSortInPlace(array)}
                 >
                 Quicksort in-place
-            </button>
+            </button> */}
             <button type="button"
                 onClick={(e) => mergeSort(array)}
                 >
