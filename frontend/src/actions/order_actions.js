@@ -1,5 +1,6 @@
+import { SPEED } from '../index';
+
 export const RECEIVE_NEW_ORDER = 'RECEIVE_NEW_ORDER';
-import { SPEED } from '../entry';
 
 export const receiveNewOrder = numbers => ({
     type: RECEIVE_NEW_ORDER,

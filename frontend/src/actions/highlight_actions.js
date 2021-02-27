@@ -1,4 +1,4 @@
-import { SPEED } from '../entry';
+import { SPEED } from '../index';
 export const UPDATE_HIGHLIGHT = 'UPDATE_HIGHLIGHT';
 export const UPDATE_PERSIST = 'UPDATE_PERSIST';
 export const CLEAR_PERSIST = 'CLEAR_PERSIST';
