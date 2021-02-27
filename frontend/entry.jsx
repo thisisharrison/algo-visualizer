@@ -13,4 +13,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.getState = store.getState;
 });
 
-export const SPEED = 10;
+export const SPEED = 100;
