@@ -28,6 +28,10 @@ ul {
     list-style: none;
 }
 
+button {
+    margin: 0.35rem;
+    padding: 0.25rem;
+}
 /* Content */
 #content {
     margin: 50px auto;
@@ -35,6 +39,7 @@ ul {
 }
 
 .list {
+    margin-top: 2rem;
     display: flex;
     flex-wrap: wrap;
     /* justify-content: center; */

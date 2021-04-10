@@ -10,24 +10,21 @@ import { getArray } from '../../reducers/selectors';
 import Util from '../../util/util';
 import Toolbar from './toolbar';
 
-const mapStateToProps = ({visualizer}) => (
-    {
-        array: getArray(visualizer)
-    }
-)
+const mapStateToProps = ({visualizer, toolbar}) => ({
+    array: getArray(visualizer),
+    disabled: toolbar.disabled
+})
 
-const mapDispatchToProps = dispatch => (
-    {
-        receiveNumber: () => dispatch(addNumber(Util.randomNumber())),
-        clearNumbers: () => dispatch(clearNumbers()),
-        resetNumbers: () => dispatch(resetNumbers()),
-        quickSort: (array) => dispatch(quickSort(array)),
-        mergeSort: (array) => dispatch(mergeSort(array)),
-        bubbleSort: (array) => dispatch(bubbleSort(array)),
-        quickSortInPlace : (array) => dispatch(quickSortInPlace(array)),
-        insertionSort : (array) => dispatch(insertionSort(array)),
-        selectionSort : (array) => dispatch(selectionSort(array))
-    }
-)
+const mapDispatchToProps = dispatch => ({
+    receiveNumber: () => dispatch(addNumber(Util.randomNumber())),
+    clearNumbers: () => dispatch(clearNumbers()),
+    resetNumbers: () => dispatch(resetNumbers()),
+    quickSort: (array) => dispatch(quickSort(array)),
+    mergeSort: (array) => dispatch(mergeSort(array)),
+    bubbleSort: (array) => dispatch(bubbleSort(array)),
+    quickSortInPlace : (array) => dispatch(quickSortInPlace(array)),
+    insertionSort : (array) => dispatch(insertionSort(array)),
+    selectionSort : (array) => dispatch(selectionSort(array))
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
