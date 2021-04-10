@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/algo-visualizer/static/css/main.9bdf999f.chunk.css",
-    "main.js": "/algo-visualizer/static/js/main.8eef0807.chunk.js",
-    "main.js.map": "/algo-visualizer/static/js/main.8eef0807.chunk.js.map",
+    "main.css": "/algo-visualizer/static/css/main.8a44df3b.chunk.css",
+    "main.js": "/algo-visualizer/static/js/main.40cd5042.chunk.js",
+    "main.js.map": "/algo-visualizer/static/js/main.40cd5042.chunk.js.map",
     "runtime-main.js": "/algo-visualizer/static/js/runtime-main.8b12237e.js",
     "runtime-main.js.map": "/algo-visualizer/static/js/runtime-main.8b12237e.js.map",
     "static/js/2.8224b38c.chunk.js": "/algo-visualizer/static/js/2.8224b38c.chunk.js",
     "static/js/2.8224b38c.chunk.js.map": "/algo-visualizer/static/js/2.8224b38c.chunk.js.map",
     "index.html": "/algo-visualizer/index.html",
-    "static/css/main.9bdf999f.chunk.css.map": "/algo-visualizer/static/css/main.9bdf999f.chunk.css.map",
+    "static/css/main.8a44df3b.chunk.css.map": "/algo-visualizer/static/css/main.8a44df3b.chunk.css.map",
     "static/js/2.8224b38c.chunk.js.LICENSE.txt": "/algo-visualizer/static/js/2.8224b38c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8b12237e.js",
     "static/js/2.8224b38c.chunk.js",
-    "static/css/main.9bdf999f.chunk.css",
-    "static/js/main.8eef0807.chunk.js"
+    "static/css/main.8a44df3b.chunk.css",
+    "static/js/main.40cd5042.chunk.js"
   ]
 }
